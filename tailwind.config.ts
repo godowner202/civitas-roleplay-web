@@ -61,7 +61,19 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// Gaming/Roleplay specific colors
+				'neon-cyan': 'hsl(var(--neon-cyan))',
+				'neon-purple': 'hsl(var(--neon-purple))',
+				'neon-green': 'hsl(var(--neon-green))',
+				'dark-bg': 'hsl(var(--dark-bg))',
+				'darker-bg': 'hsl(var(--darker-bg))',
+				'card-bg': 'hsl(var(--card-bg))'
+			},
+			backgroundImage: {
+				'gradient-primary': 'var(--gradient-primary)',
+				'gradient-dark': 'var(--gradient-dark)',
+				'gradient-glow': 'var(--gradient-glow)'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
