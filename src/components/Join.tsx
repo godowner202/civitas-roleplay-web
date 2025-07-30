@@ -17,7 +17,7 @@ const Join = () => {
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             We zijn momenteel in development! Krijg vroege toegang en help ons de beste Belgische RP server te bouwen.
-            Volg deze stappen om deel te worden van onze beta community.
+            Geen complexe whitelist - iedereen krijgt een eerlijke kans door gewoon onze Discord regels te accepteren.
           </p>
         </div>
         
@@ -54,7 +54,7 @@ const Join = () => {
               <CardTitle className="text-lg">Stap 3</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">Voltooi de whitelist procedure en creëer je karakter</p>
+              <p className="text-muted-foreground">Accepteer de regels in Discord en ontvang automatisch je burger rol</p>
             </CardContent>
           </Card>
           
@@ -89,7 +89,7 @@ const Join = () => {
                   <li>• Discord account voor verificatie</li>
                   <li>• Werkende microfoon</li>
                   <li>• Minimaal 16 jaar oud</li>
-                  <li>• Whitelist goedkeuring</li>
+                  <li>• Geen whitelist procedure - automatische toegang</li>
                 </ul>
               </div>
             </CardContent>
@@ -106,7 +106,7 @@ const Join = () => {
               <ul className="space-y-2 text-muted-foreground">
                 <li className="flex items-center">
                   <div className="h-2 w-2 bg-primary rounded-full mr-3"></div>
-                  Whitelist aanvragen en support
+                  Automatische toegang door regels te accepteren
                 </li>
                 <li className="flex items-center">
                   <div className="h-2 w-2 bg-primary rounded-full mr-3"></div>
