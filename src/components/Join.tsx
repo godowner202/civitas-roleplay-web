@@ -30,7 +30,7 @@ const Join = () => {
               <CardTitle className="text-lg">Stap 1</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">Download en installeer GTAV Legacy & FiveM vanaf de officiële website</p>
+              <p className="text-muted-foreground">Download en installeer GTAV Legacy & FiveM vanaf de officiële website of Launcher</p>
             </CardContent>
           </Card>
           
