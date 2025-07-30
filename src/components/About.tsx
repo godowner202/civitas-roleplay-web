@@ -9,9 +9,15 @@ const About = () => {
           <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-primary bg-clip-text text-transparent">
             Over Civitas RP
           </h2>
+          <div className="mb-4">
+            <span className="bg-accent/20 text-accent px-3 py-1 rounded-full text-sm font-medium">
+              🚧 In Development
+            </span>
+          </div>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Civitas RP is meer dan een server - het is een gemeenschap waar verhalen tot leven komen. 
-            Onze Belgische FiveM server biedt een unieke roleplay ervaring met focus op realisme en plezier.
+            We werken samen met <strong className="text-primary">Belgium Modding Team</strong> voor authentieke Belgische voertuigen en EUP, 
+            wat zorgt voor een unieke en realistische Belgische roleplay ervaring.
           </p>
         </div>
         

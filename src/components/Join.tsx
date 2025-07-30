@@ -7,12 +7,17 @@ const Join = () => {
     <section id="join" className="py-20 bg-darker-bg">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
+          <div className="mb-4">
+            <span className="bg-accent/20 text-accent px-4 py-2 rounded-full text-sm font-medium">
+              🚧 Beta Development - Vroege Toegang
+            </span>
+          </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-primary bg-clip-text text-transparent">
             Hoe kan ik meedoen?
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Het is heel eenvoudig om deel te worden van onze community. 
-            Volg deze stappen en begin vandaag nog met jouw roleplay avontuur!
+            We zijn momenteel in development! Krijg vroege toegang en help ons de beste Belgische RP server te bouwen.
+            Volg deze stappen om deel te worden van onze beta community.
           </p>
         </div>
         
