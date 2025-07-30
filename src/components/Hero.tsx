@@ -27,7 +27,7 @@ const Hero = () => {
           </div>
           
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            De beste Belgische FiveM Roleplay server. Authentieke Belgische voertuigen en uniformen door Belgium Modding Team. Beleef je dromen en maak deel uit van onze gemeenschap.
+            De beste Belgische FiveM Roleplay server. Met authentieke Belgische voertuigen en uniformen van Belgium Modding Team. Beleef je dromen en maak deel uit van onze gemeenschap.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">

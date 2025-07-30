@@ -7,10 +7,10 @@ const Partners = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-gradient-primary bg-clip-text text-transparent">
-            Onze Partners
+            Modding Credits
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            We werken samen met de beste modding teams om jullie de meest authentieke Belgische ervaring te bieden.
+            We gebruiken content van getalenteerde modding teams om jullie de meest authentieke Belgische ervaring te bieden.
           </p>
         </div>
 
@@ -26,8 +26,8 @@ const Partners = () => {
               <div className="flex-1 text-center md:text-left">
                 <h3 className="text-2xl font-bold mb-3 text-primary">Belgium Modding Team</h3>
                 <p className="text-muted-foreground mb-4">
-                  Onze officiële partner voor authentieke Belgische voertuigen en EUP (Emergency Uniform Pack) voor politie en ambulancediensten. 
-                  Dankzij hun expertise kunnen we een unieke en realistische Belgische roleplay ervaring aanbieden.
+                  We gebruiken authentieke Belgische voertuigen en EUP (Emergency Uniform Pack) van Belgium Modding Team voor politie en ambulancediensten. 
+                  Hun geweldige werk zorgt voor een unieke en realistische Belgische roleplay ervaring op onze server.
                 </p>
                 
                 <div className="flex flex-wrap gap-3 justify-center md:justify-start mb-4">

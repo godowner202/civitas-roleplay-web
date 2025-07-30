@@ -16,7 +16,7 @@ const About = () => {
           </div>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Civitas RP is meer dan een server - het is een gemeenschap waar verhalen tot leven komen. 
-            We werken samen met <strong className="text-primary">Belgium Modding Team</strong> voor authentieke Belgische voertuigen en EUP, 
+            We gebruiken authentieke Belgische voertuigen en EUP van <strong className="text-primary">Belgium Modding Team</strong>, 
             wat zorgt voor een unieke en realistische Belgische roleplay ervaring.
           </p>
         </div>
