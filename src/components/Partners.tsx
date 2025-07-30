@@ -18,8 +18,12 @@ const Partners = () => {
           <div className="bg-card border border-border rounded-xl p-8 hover:border-primary/50 transition-all duration-300">
             <div className="flex flex-col md:flex-row items-center gap-6">
               <div className="flex-shrink-0">
-                <div className="w-20 h-20 bg-gradient-primary rounded-xl flex items-center justify-center">
-                  <Car className="h-10 w-10 text-primary-foreground" />
+                <div className="w-20 h-20 bg-white rounded-xl flex items-center justify-center p-2">
+                  <img 
+                    src="/lovable-uploads/8c9dba12-8268-4994-943b-3fc4b6403c12.png" 
+                    alt="Belgium Modding Team Logo" 
+                    className="w-full h-full object-contain"
+                  />
                 </div>
               </div>
               
