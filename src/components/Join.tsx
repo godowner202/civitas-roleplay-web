@@ -84,6 +84,7 @@ const Join = () => {
               <div className="space-y-2">
                 <h4 className="font-semibold text-foreground">Vereisten:</h4>
                 <ul className="space-y-1 text-muted-foreground">
+                  <li>• Een Officiele copy van Grand Theft Auto V (Legacy Edition)(Geen Pirate versie)</li>
                   <li>• FiveM client geïnstalleerd</li>
                   <li>• Discord account voor verificatie</li>
                   <li>• Werkende microfoon</li>
