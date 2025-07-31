@@ -8,7 +8,7 @@ const PlayerCount = () => {
   const fetchPlayerCount = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/discord-members');
+      const response = await fetch('https://jjnirbqvoatwdgkygsyf.supabase.co/functions/v1/discord-members');
       if (response.ok) {
         const data = await response.json();
         setPlayerCount(data.memberCount || 22);
