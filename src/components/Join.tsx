@@ -84,11 +84,11 @@ const Join = () => {
               <div className="space-y-2">
                 <h4 className="font-semibold text-foreground">Vereisten:</h4>
                 <ul className="space-y-1 text-muted-foreground">
-                  <li>• Een Officiele copy van Grand Theft Auto V (Legacy Edition)(Geen Pirate versie)</li>
+                  <li>• Een Officiele kopie van Grand Theft Auto V bezitten</li>
                   <li>• FiveM client geïnstalleerd</li>
-                  <li>• Discord account voor verificatie</li>
+                  <li>• Onze Discord joinen</li>
                   <li>• Werkende microfoon</li>
-                  <li>• Minimaal 16 jaar oud</li>
+                  <li>• Minimaal 13 jaar oud (15 voor ambulance, 16 voor politie, 18 voor staff)</li>
                   <li>• Geen whitelist procedure - automatische toegang</li>
                 </ul>
               </div>
