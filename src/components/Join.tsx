@@ -142,7 +142,7 @@ const Join = () => {
           <div className="bg-gradient-primary rounded-2xl p-8 max-w-2xl mx-auto">
             <h3 className="text-3xl font-bold text-primary-foreground mb-4">Begin vandaag nog!</h3>
             <p className="text-primary-foreground/90 mb-6">
-              Sluit je aan bij honderden spelers die dagelijks geweldige verhalen beleven op Civitas RP. 
+              Word onderdeel van onze vriendelijke community en beleef geweldige verhalen op Civitas RP. 
               Jouw avontuur wacht op je!
             </p>
             <Button 
