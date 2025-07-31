@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
-import PlayerCount from "./PlayerCount";
 
 const Header = () => {
   const location = useLocation();
@@ -18,7 +17,6 @@ const Header = () => {
         </Link>
         
         <div className="hidden md:flex items-center space-x-4">
-          <PlayerCount />
           <nav className="flex items-center space-x-6">
             <Link 
               to="/" 

@@ -28,11 +28,13 @@ const PlayerCount = () => {
   }, []);
 
   return (
-    <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full">
-      <Users className="h-4 w-4 text-primary" />
-      <span className="text-sm font-medium">
-        Sluit je aan bij {loading ? "..." : playerCount} spelers
-      </span>
+    <div className="text-center">
+      <h4 className="text-2xl font-bold text-primary-foreground mb-2">Sluit je aan bij</h4>
+      <div className="text-4xl font-bold text-primary-foreground mb-2 flex items-center justify-center gap-2">
+        <Users className="h-8 w-8" />
+        {loading ? "..." : `${playerCount}+`}
+      </div>
+      <p className="text-primary-foreground/80">Actieve spelers die dagelijks hun verhalen beleven</p>
     </div>
   );
 };

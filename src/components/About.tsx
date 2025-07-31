@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Shield, Heart, Star, Zap } from "lucide-react";
+import PlayerCount from "./PlayerCount";
 
 const About = () => {
   return (
@@ -91,9 +92,7 @@ const About = () => {
               </ul>
             </div>
             <div className="bg-gradient-primary rounded-xl p-6 text-center">
-              <h4 className="text-2xl font-bold text-primary-foreground mb-2">Sluit je aan bij</h4>
-              <div className="text-4xl font-bold text-primary-foreground mb-2">500+</div>
-              <p className="text-primary-foreground/80">Actieve spelers die dagelijks hun verhalen beleven</p>
+              <PlayerCount />
             </div>
           </div>
         </div>
