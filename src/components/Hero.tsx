@@ -48,7 +48,7 @@ const Hero = () => {
             <div className="bg-card/50 backdrop-blur-sm border border-border rounded-lg p-6 hover:bg-card/70 transition-all duration-300">
               <Users className="h-8 w-8 text-primary mx-auto mb-3" />
               <h3 className="text-lg font-semibold mb-2">Actieve Community</h3>
-              <p className="text-muted-foreground">Meer dan 500+ actieve spelers</p>
+              <p className="text-muted-foreground">Vriendelijke en betrokken spelers</p>
             </div>
             
             <div className="bg-card/50 backdrop-blur-sm border border-border rounded-lg p-6 hover:bg-card/70 transition-all duration-300">

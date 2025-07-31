@@ -1,24 +1,6 @@
-import { MessageCircle, Users, Shield } from "lucide-react";
-import { useState, useEffect } from "react";
+import { MessageCircle, Shield } from "lucide-react";
 
 const Footer = () => {
-  const [playerCount, setPlayerCount] = useState<number>(22);
-
-  const fetchPlayerCount = async () => {
-    try {
-      const response = await fetch('https://jjnirbqvoatwdgkygsyf.supabase.co/functions/v1/discord-members');
-      if (response.ok) {
-        const data = await response.json();
-        setPlayerCount(data.memberCount || 22);
-      }
-    } catch (error) {
-      console.error('Fout bij ophalen playercount:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchPlayerCount();
-  }, []);
   return (
     <footer className="bg-background border-t border-border py-12">
       <div className="container mx-auto px-4">
@@ -67,10 +49,6 @@ const Footer = () => {
                 <MessageCircle className="h-4 w-4" />
                 <span>Discord Server</span>
               </a>
-              <div className="flex items-center space-x-2 text-muted-foreground">
-                <Users className="h-4 w-4" />
-                <span>{playerCount}+ Actieve Spelers</span>
-              </div>
               <div className="flex items-center space-x-2 text-muted-foreground">
                 <Shield className="h-4 w-4" />
                 <span>24/7 Staff Support</span>
