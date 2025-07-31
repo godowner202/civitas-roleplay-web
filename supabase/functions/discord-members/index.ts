@@ -14,7 +14,7 @@ serve(async (req) => {
   try {
     const DISCORD_BOT_TOKEN = Deno.env.get('DISCORD_BOT_TOKEN');
     const GUILD_ID = Deno.env.get('DISCORD_GUILD_ID'); // Server ID
-    const ROLE_ID = Deno.env.get('DISCORD_ROLE_ID'); // Burger rol ID
+    const ROLE_ID = '1397006411246075945'; // Burger rol ID
 
     if (!DISCORD_BOT_TOKEN || !GUILD_ID || !ROLE_ID) {
       throw new Error('Missing Discord configuration');
