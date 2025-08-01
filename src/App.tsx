@@ -14,6 +14,7 @@ import Gallery from "./pages/Gallery";
 import Events from "./pages/Events";
 import SecretAdmin from "./pages/SecretAdmin";
 import NotFound from "./pages/NotFound";
+import FiveMDatabaseAnalyzer from "./components/FiveMDatabaseAnalyzer";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/updates" element={<Updates />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/events" element={<Events />} />
+          <Route path="/db-analyze" element={<FiveMDatabaseAnalyzer />} />
           <Route path="/geheim-admin-123" element={<SecretAdmin />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
