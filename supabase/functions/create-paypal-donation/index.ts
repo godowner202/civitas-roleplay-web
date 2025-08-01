@@ -23,8 +23,17 @@ serve(async (req) => {
       throw new Error('PayPal credentials not configured');
     }
 
+    console.log('PayPal Client ID length:', clientId.length);
+    console.log('Using sandbox environment');
+
+    // Determine if we should use sandbox or production
+    const isProduction = false; // Set to true for production
+    const baseUrl = isProduction 
+      ? 'https://api-m.paypal.com' 
+      : 'https://api-m.sandbox.paypal.com';
+
     // PayPal OAuth
-    const authResponse = await fetch('https://api-m.sandbox.paypal.com/v1/oauth2/token', {
+    const authResponse = await fetch(`${baseUrl}/v1/oauth2/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -47,7 +56,7 @@ serve(async (req) => {
     }
 
     // Create PayPal order
-    const orderResponse = await fetch('https://api-m.sandbox.paypal.com/v2/checkout/orders', {
+    const orderResponse = await fetch(`${baseUrl}/v2/checkout/orders`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
