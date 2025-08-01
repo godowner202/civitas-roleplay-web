@@ -72,7 +72,6 @@ All colors MUST be HSL.
   .glass-effect {
     @apply bg-background/80 backdrop-blur-md border border-border/50;
   }
-}
 
   .dark {
     --background: 222.2 84% 4.9%;
