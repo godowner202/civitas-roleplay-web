@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
-import { ThemeToggle } from "./ThemeToggle";
+
 import { 
   NavigationMenu,
   NavigationMenuContent,
@@ -107,12 +107,22 @@ const Header = () => {
                   Meedoen
                 </Link>
               </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <Link 
+                  to="/auth" 
+                  className={`text-foreground hover:text-primary transition-colors px-4 py-2 ${
+                    location.pathname === '/auth' ? 'text-primary font-semibold' : ''
+                  }`}
+                >
+                  Login
+                </Link>
+              </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
         </div>
         
         <div className="flex items-center space-x-3">
-          <ThemeToggle />
           <Button 
             variant="discord" 
             size="sm"

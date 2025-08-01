@@ -17,7 +17,7 @@ import {
 
 const jobs = [
   {
-    category: "Overheidsdiensten",
+    category: "Beschikbare Overheidsdiensten",
     color: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
     jobs: [
       {
@@ -25,63 +25,41 @@ const jobs = [
         icon: Shield,
         description: "Handhaaf de wet en orde in Los Santos. Patrouilleer, onderzoek misdaden en bescherm de burgers.",
         salary: "€2.500 - €4.000",
-        requirements: ["18+ jaar", "Nederlands spreken", "Microfoon verplicht"]
+        requirements: ["18+ jaar", "Nederlands spreken", "Microfoon verplicht"],
+        available: true
       },
       {
         title: "Ambulance Medewerker",
         icon: Heart,
         description: "Red levens als paramedicus of arts. Reageer op noodoproepen en verzorg gewonde burgers.",
         salary: "€2.200 - €3.500",
-        requirements: ["Eerste hulp kennis", "Stressbestendig", "Teamspeler"]
+        requirements: ["Eerste hulp kennis", "Stressbestendig", "Teamspeler"],
+        available: true
       },
       {
         title: "Advocaat",
         icon: Gavel,
         description: "Verdedig burgers voor de rechtbank. Behandel rechtszaken en geef juridisch advies.",
         salary: "€3.000 - €5.000",
-        requirements: ["Goede communicatie", "Juridische interesse", "Overtuigingskracht"]
+        requirements: ["Goede communicatie", "Juridische interesse", "Overtuigingskracht"],
+        available: true
       }
     ]
+  }
+];
+
+const businessOpportunities = [
+  {
+    title: "Tuning Garage",
+    icon: Wrench,
+    description: "Start je eigen tuning garage en modificeer voertuigen voor klanten.",
+    requirements: ["Startkapitaal", "Technische kennis", "Bedrijfslocatie"]
   },
   {
-    category: "Transport & Logistiek",
-    color: "bg-green-500/10 text-green-600 dark:text-green-400",
-    jobs: [
-      {
-        title: "Taxi Chauffeur",
-        icon: Car,
-        description: "Vervoer burgers door de stad. Verdien geld door passagiers veilig naar hun bestemming te brengen.",
-        salary: "€1.500 - €2.500",
-        requirements: ["Rijbewijs", "Lokale kennis", "Vriendelijke service"]
-      },
-      {
-        title: "Trucker",
-        icon: Truck,
-        description: "Transport goederen tussen verschillende locaties. Verdien goed geld met lange ritten.",
-        salary: "€2.000 - €3.500",
-        requirements: ["Truck rijbewijs", "Geduld", "Navigatie vaardigheden"]
-      }
-    ]
-  },
-  {
-    category: "Dienstverlening",
-    color: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
-    jobs: [
-      {
-        title: "Monteur",
-        icon: Wrench,
-        description: "Repareer voertuigen in je eigen garage. Help burgers met autopech en modificaties.",
-        salary: "€1.800 - €3.000",
-        requirements: ["Technische kennis", "Probleemoplossend", "Klantvriendelijk"]
-      },
-      {
-        title: "Vastgoed Makelaar",
-        icon: Building,
-        description: "Verkoop huizen en bedrijfspanden. Help burgers hun droomhuis te vinden.",
-        salary: "€2.500 - €4.500",
-        requirements: ["Verkoop ervaring", "Marktkennis", "Netwerk vaardigheden"]
-      }
-    ]
+    title: "Mechanic Shop",
+    icon: Car,
+    description: "Open een reparatiewerkplaats en help burgers met autopech.",
+    requirements: ["Startkapitaal", "Reparatie skills", "Goede locatie"]
   }
 ];
 
@@ -147,7 +125,10 @@ const Jobs = () => {
                           <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                             <IconComponent className="w-5 h-5 text-primary-foreground" />
                           </div>
-                          <CardTitle className="text-foreground">{job.title}</CardTitle>
+                          <CardTitle className="text-foreground flex items-center gap-2">
+                            {job.title}
+                            <Badge className="bg-green-500/10 text-green-600">Beschikbaar</Badge>
+                          </CardTitle>
                         </div>
                         <Badge variant="outline" className="w-fit text-primary border-primary/20">
                           {job.salary}
@@ -177,6 +158,55 @@ const Jobs = () => {
               </div>
             </div>
           ))}
+        </section>
+
+        {/* Business Opportunities Section */}
+        <section className="mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Eigen Bedrijf Starten</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Wil je ondernemer worden? Start je eigen bedrijf en bouw je financiële imperium op!
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6 mb-12">
+            {businessOpportunities.map((business, index) => {
+              const IconComponent = business.icon;
+              return (
+                <Card key={index} className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20">
+                  <CardHeader>
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <IconComponent className="w-5 h-5 text-primary-foreground" />
+                      </div>
+                      <CardTitle className="text-foreground flex items-center gap-2">
+                        {business.title}
+                        <Badge className="bg-yellow-500/10 text-yellow-600">Eigen Bedrijf</Badge>
+                      </CardTitle>
+                    </div>
+                  </CardHeader>
+                  
+                  <CardContent>
+                    <p className="text-muted-foreground mb-4 leading-relaxed">
+                      {business.description}
+                    </p>
+                    
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-2">Vereisten:</h4>
+                      <ul className="space-y-1">
+                        {business.requirements.map((req, reqIndex) => (
+                          <li key={reqIndex} className="text-sm text-muted-foreground flex items-center gap-2">
+                            <div className="w-1 h-1 bg-primary rounded-full"></div>
+                            {req}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
         </section>
 
         {/* Economy Section */}
