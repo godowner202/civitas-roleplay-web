@@ -86,7 +86,8 @@ serve(async (req) => {
           license: row[4],      // Column 5: license
           name: row[5],         // Column 6: name
           money: row[6],        // Column 7: money (JSON)
-          charinfo: row[7]      // Column 8: charinfo (JSON)
+          charinfo: row[7],     // Column 8: charinfo (JSON)
+          job: row[8]           // Column 9: job (JSON)
         };
 
         // Parse JSON data
@@ -149,7 +150,8 @@ serve(async (req) => {
         license: row[4],      // Column 5: license
         name: row[5],         // Column 6: name
         money: row[6],        // Column 7: money (JSON)
-        charinfo: row[7]      // Column 8: charinfo (JSON)
+        charinfo: row[7],     // Column 8: charinfo (JSON)
+        job: row[8]           // Column 9: job (JSON)
       };
 
       console.log('Found player:', playerStats.name, 'with license:', playerStats.license);
@@ -197,6 +199,27 @@ serve(async (req) => {
         }
       } catch (e) {
         console.log('Error parsing charinfo JSON:', e);
+      }
+
+      // Parse JSON data from job column (kolom 9)
+      try {
+        if (playerStats.job && typeof playerStats.job === 'string') {
+          const jobData = JSON.parse(playerStats.job);
+          playerStats.job_name = jobData.name;
+          playerStats.job_label = jobData.label;
+          playerStats.job_grade_level = jobData.grade?.level;
+          playerStats.job_grade_name = jobData.grade?.name;
+          playerStats.job_payment = jobData.payment;
+          playerStats.job_isboss = jobData.isboss;
+          
+          console.log('Parsed job data:', {
+            job: playerStats.job_name,
+            grade: playerStats.job_grade_name,
+            payment: playerStats.job_payment
+          });
+        }
+      } catch (e) {
+        console.log('Error parsing job JSON:', e);
       }
     }
 
