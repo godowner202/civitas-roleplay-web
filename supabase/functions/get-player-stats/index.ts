@@ -138,6 +138,13 @@ serve(async (req) => {
       LIMIT 1
     `, [playerId]);
 
+    console.log('Query result rows:', playerResult.rows?.length);
+    console.log('Query result fields:', playerResult.fields?.map(f => f.name));
+    
+    if (playerResult.rows && playerResult.rows.length > 0) {
+      console.log('Raw row data:', playerResult.rows[0]);
+    }
+
     if (playerResult.rows && playerResult.rows.length > 0) {
       const row = playerResult.rows[0];
       
