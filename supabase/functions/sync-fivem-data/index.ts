@@ -161,9 +161,11 @@ serve(async (req) => {
             console.error('Error upserting batch:', error);
             errors.push(`Batch error: ${error.message}`);
           } else {
-            syncedPlayers.push(...(data || []));
-            console.log(`Successfully synced batch: ${data?.length || 0} players`);
-            console.log('Synced player licenses:', data?.map(d => d.license));
+            // Count successful upserts
+            const upsertedCount = playersToSync.length; // All players in batch were processed
+            syncedPlayers.push(...playersToSync.map(p => ({ license: p.license })));
+            console.log(`Successfully synced batch: ${upsertedCount} players`);
+            console.log('Synced player licenses:', playersToSync.map(p => p.license));
           }
         } else {
           console.log('No valid players in batch to sync');
