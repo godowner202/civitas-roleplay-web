@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { 
   X, Upload, Settings, Users, Calendar, Image as ImageIcon, 
   AlertTriangle, Plus, Save, Trash2, Edit, ZoomIn, Play, 
-  ExternalLink, Bell, Wrench
+  Bell
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -126,9 +126,6 @@ const SecretAdmin = () => {
     announcement: { enabled: false, message: "", type: "info" }
   });
 
-  // Discord state
-  const [discordMemberCount, setDiscordMemberCount] = useState<number | null>(null);
-
   const handleLogin = () => {
     if (password === "CivitasRP2024!") {
       setIsAuthenticated(true);
@@ -145,7 +142,6 @@ const SecretAdmin = () => {
       fetchTeamMembers();
       fetchEvents();
       fetchSiteSettings();
-      fetchDiscordMemberCount();
     }
   }, [isAuthenticated]);
 
@@ -228,17 +224,6 @@ const SecretAdmin = () => {
       setSiteSettings(settings);
     } catch (error: any) {
       toast.error("Fout bij ophalen site settings: " + error.message);
-    }
-  };
-
-  const fetchDiscordMemberCount = async () => {
-    try {
-      const { data, error } = await supabase.functions.invoke('discord-members');
-      if (error) throw error;
-      setDiscordMemberCount(data.memberCount);
-    } catch (error: any) {
-      console.error("Discord member count error:", error);
-      setDiscordMemberCount(22); // fallback
     }
   };
 
@@ -622,13 +607,12 @@ const SecretAdmin = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="updates">Updates</TabsTrigger>
             <TabsTrigger value="gallery">Gallery</TabsTrigger>
             <TabsTrigger value="team">Team</TabsTrigger>
             <TabsTrigger value="events">Events</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
-            <TabsTrigger value="discord">Discord</TabsTrigger>
           </TabsList>
 
           {/* Updates Tab */}
@@ -1320,68 +1304,6 @@ const SecretAdmin = () => {
                     </Select>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Discord Tab */}
-          <TabsContent value="discord" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <ExternalLink className="h-5 w-5" />
-                  Discord Integration
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-muted rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-primary mb-1">
-                      {discordMemberCount || '...'}
-                    </div>
-                    <div className="text-sm text-muted-foreground">Online Members</div>
-                  </div>
-                  
-                  <div className="bg-muted rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-accent mb-1">
-                      {teamMembers.length}
-                    </div>
-                    <div className="text-sm text-muted-foreground">Team Members</div>
-                  </div>
-                  
-                  <div className="bg-muted rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-neon-green mb-1">
-                      Online
-                    </div>
-                    <div className="text-sm text-muted-foreground">Server Status</div>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <Button 
-                    onClick={() => window.open('https://discord.gg/CivitasRoleplay', '_blank')}
-                    className="bg-[#5865F2] hover:bg-[#4752C4] text-white"
-                  >
-                    <ExternalLink className="mr-2 h-4 w-4" />
-                    Open Discord
-                  </Button>
-                  
-                  <Button 
-                    variant="outline"
-                    onClick={fetchDiscordMemberCount}
-                  >
-                    <Wrench className="mr-2 h-4 w-4" />
-                    Refresh Data
-                  </Button>
-                </div>
-
-                <Alert>
-                  <Bell className="h-4 w-4" />
-                  <AlertDescription>
-                    Discord widget toont live member count van de "Burger" rol. 
-                    Data wordt automatisch vernieuwd elke 5 minuten.
-                  </AlertDescription>
-                </Alert>
               </CardContent>
             </Card>
           </TabsContent>
