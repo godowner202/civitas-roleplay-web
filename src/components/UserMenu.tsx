@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { User, LogOut, UserPlus, LogIn, Unlink } from "lucide-react";
+import { User, LogOut, UserPlus, LogIn, Unlink, Activity } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -159,6 +159,14 @@ const UserMenu = () => {
           </p>
         </div>
         <DropdownMenuSeparator />
+        {playerAccount && (
+          <DropdownMenuItem asChild>
+            <Link to="/dashboard" className="cursor-pointer">
+              <Activity className="mr-2 h-4 w-4" />
+              <span>Dashboard</span>
+            </Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem asChild>
           <Link to="/character-koppeling" className="cursor-pointer">
             <User className="mr-2 h-4 w-4" />

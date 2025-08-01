@@ -102,28 +102,45 @@ const CharacterKoppeling = () => {
 
     setSearching(true);
     try {
+      // Improved fuzzy search with multiple strategies
+      const searchTerm1 = firstName.trim().toLowerCase();
+      const searchTerm2 = lastName.trim().toLowerCase();
+      
       const { data: characters, error } = await supabase
         .from('fivem_players')
         .select('license, firstname, lastname, citizenid, name')
-        .ilike('firstname', `%${firstName.trim()}%`)
-        .ilike('lastname', `%${lastName.trim()}%`)
-        .limit(10);
+        .or(`firstname.ilike.%${searchTerm1}%,lastname.ilike.%${searchTerm2}%,firstname.ilike.%${searchTerm2}%,lastname.ilike.%${searchTerm1}%`)
+        .limit(15);
 
       if (error) throw error;
 
-      setSearchResults(characters || []);
+      // Filter and rank results for better matching
+      const filteredResults = (characters || []).filter(char => {
+        const first = char.firstname?.toLowerCase() || '';
+        const last = char.lastname?.toLowerCase() || '';
+        return first.includes(searchTerm1) || first.includes(searchTerm2) ||
+               last.includes(searchTerm1) || last.includes(searchTerm2);
+      });
+
+      setSearchResults(filteredResults);
       
-      if (!characters || characters.length === 0) {
+      if (filteredResults.length === 0) {
         toast({
           title: "Geen characters gevonden",
-          description: "Controleer of je voor- en achternaam correct zijn gespeld",
+          description: "Probeer verschillende spelling variaties of controleer of je character bestaat in de database",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Characters gevonden!",
+          description: `${filteredResults.length} matching character(s) gevonden`,
         });
       }
     } catch (error: any) {
       console.error('Error searching characters:', error);
       toast({
         title: "Zoeken mislukt",
-        description: "Er ging iets mis bij het zoeken naar characters",
+        description: "Database connectie probleem. Probeer het later opnieuw.",
         variant: "destructive",
       });
     } finally {
