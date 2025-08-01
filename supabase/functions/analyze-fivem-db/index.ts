@@ -29,12 +29,12 @@ serve(async (req) => {
     console.log('Starting FiveM database analysis...');
 
     // Get database credentials from environment
-    const DB_HOST = Deno.env.get('FIVEM_DB_HOST');
+    const DB_ENDPOINT = Deno.env.get('FIVEM_DB_HOST');
     const DB_USER = Deno.env.get('FIVEM_DB_USER'); 
     const DB_PASSWORD = Deno.env.get('FIVEM_DB_PASSWORD');
     const DB_NAME = Deno.env.get('FIVEM_DB_NAME');
 
-    if (!DB_HOST || !DB_USER || !DB_PASSWORD || !DB_NAME) {
+    if (!DB_ENDPOINT || !DB_USER || !DB_PASSWORD || !DB_NAME) {
       console.error('Missing database credentials');
       return new Response(
         JSON.stringify({ error: 'Database credentials not configured' }),
@@ -42,15 +42,26 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Connecting to MySQL database: ${DB_HOST}:3306/${DB_NAME}`);
+    // Parse hostname and port from endpoint (format: hostname:port or just hostname)
+    let hostname, port;
+    if (DB_ENDPOINT.includes(':')) {
+      [hostname, port] = DB_ENDPOINT.split(':');
+      port = parseInt(port);
+    } else {
+      hostname = DB_ENDPOINT;
+      port = 3306; // Default MySQL port
+    }
+
+    console.log(`Connecting to MySQL database: ${hostname}:${port}/${DB_NAME}`);
+    console.log(`Using credentials: ${DB_USER} / ${DB_PASSWORD ? '[PASSWORD SET]' : '[NO PASSWORD]'}`);
 
     // Import MySQL driver
     const { Client } = await import("https://deno.land/x/mysql@v2.12.1/mod.ts");
 
     // Create MySQL connection
     const client = await new Client().connect({
-      hostname: DB_HOST,
-      port: 3306,
+      hostname: hostname,
+      port: port,
       username: DB_USER,
       password: DB_PASSWORD,
       db: DB_NAME,
