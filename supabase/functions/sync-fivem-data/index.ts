@@ -79,31 +79,31 @@ serve(async (req) => {
           try {
             console.log(`Processing player ${index + 1}, raw row:`, row);
             
-            // Parse based on column positions
+            // Parse based on object properties (not array indices)
             const player = {
-              fivem_id: row[0],           // Column 1: id
-              userid: row[1],             // Column 2: userid  
-              citizenid: row[2],          // Column 3: citizenid
-              cid: row[3],                // Column 4: cid
-              license: row[4],            // Column 5: license
-              name: row[5],               // Column 6: name
-              money: {},                  // Column 7: money (JSON)
-              charinfo: {},               // Column 8: charinfo (JSON)
-              job: {}                     // Column 9: job (JSON)
+              fivem_id: row.id,
+              userid: row.userid,
+              citizenid: row.citizenid,
+              cid: row.cid,
+              license: row.license,
+              name: row.name,
+              money: {},
+              charinfo: {},
+              job: {}
             };
 
             console.log(`Player ${index + 1} basic data:`, {
               license: player.license,
               name: player.name,
-              raw_money: row[6],
-              raw_charinfo: row[7],
-              raw_job: row[8]
+              raw_money: row.money,
+              raw_charinfo: row.charinfo,
+              raw_job: row.job
             });
 
-            // Parse JSON columns
+            // Parse JSON columns using object properties
             try {
-              if (row[6] && typeof row[6] === 'string') {
-                player.money = JSON.parse(row[6]);
+              if (row.money && typeof row.money === 'string') {
+                player.money = JSON.parse(row.money);
                 console.log(`Player ${index + 1} parsed money:`, player.money);
               }
             } catch (e) {
@@ -112,8 +112,8 @@ serve(async (req) => {
             }
 
             try {
-              if (row[7] && typeof row[7] === 'string') {
-                player.charinfo = JSON.parse(row[7]);
+              if (row.charinfo && typeof row.charinfo === 'string') {
+                player.charinfo = JSON.parse(row.charinfo);
                 console.log(`Player ${index + 1} parsed charinfo:`, player.charinfo);
               }
             } catch (e) {
@@ -122,8 +122,8 @@ serve(async (req) => {
             }
 
             try {
-              if (row[8] && typeof row[8] === 'string') {
-                player.job = JSON.parse(row[8]);
+              if (row.job && typeof row.job === 'string') {
+                player.job = JSON.parse(row.job);
                 console.log(`Player ${index + 1} parsed job:`, player.job);
               }
             } catch (e) {
