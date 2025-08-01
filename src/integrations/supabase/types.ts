@@ -83,6 +83,48 @@ export type Database = {
         }
         Relationships: []
       }
+      jobs: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          job_name: string
+          job_rank: string
+          job_type: string | null
+          order_index: number | null
+          requirements: string | null
+          salary: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          job_name: string
+          job_rank: string
+          job_type?: string | null
+          order_index?: number | null
+          requirements?: string | null
+          salary: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          job_name?: string
+          job_rank?: string
+          job_type?: string | null
+          order_index?: number | null
+          requirements?: string | null
+          salary?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           cfx_username: string | null

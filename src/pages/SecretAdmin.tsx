@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { 
   X, Upload, Settings, Users, Calendar, Image as ImageIcon, 
   AlertTriangle, Plus, Save, Trash2, Edit, ZoomIn, Play, 
-  Bell
+  Bell, Briefcase
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -65,6 +65,18 @@ interface Event {
   end_date?: string;
   event_type: string;
   is_recurring: boolean;
+}
+
+interface Job {
+  id: string;
+  job_name: string;
+  job_rank: string;
+  salary: number;
+  description?: string;
+  job_type: string;
+  requirements?: string;
+  is_active: boolean;
+  order_index: number;
 }
 
 interface SiteSettings {
@@ -120,6 +132,16 @@ const SecretAdmin = () => {
   const [eventType, setEventType] = useState("general");
   const [eventRecurring, setEventRecurring] = useState(false);
 
+  // Jobs state
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [jobName, setJobName] = useState("");
+  const [jobRank, setJobRank] = useState("");
+  const [jobSalary, setJobSalary] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
+  const [jobType, setJobType] = useState("civilian");
+  const [jobRequirements, setJobRequirements] = useState("");
+  const [editingJob, setEditingJob] = useState<Job | null>(null);
+
   // Settings state
   const [siteSettings, setSiteSettings] = useState<SiteSettings>({
     maintenance_mode: { enabled: false, message: "We are performing scheduled maintenance. Please check back soon!" },
@@ -141,6 +163,7 @@ const SecretAdmin = () => {
       fetchGalleryItems();
       fetchTeamMembers();
       fetchEvents();
+      fetchJobs();
       fetchSiteSettings();
     }
   }, [isAuthenticated]);
@@ -201,6 +224,97 @@ const SecretAdmin = () => {
       setEvents(data || []);
     } catch (error: any) {
       toast.error("Fout bij ophalen events: " + error.message);
+    }
+  };
+
+  const fetchJobs = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("jobs")
+        .select("*")
+        .order("order_index", { ascending: true });
+      
+      if (error) throw error;
+      setJobs(data || []);
+    } catch (error: any) {
+      toast.error("Fout bij ophalen jobs: " + error.message);
+    }
+  };
+
+  const handleSubmitJob = async () => {
+    if (!jobName.trim() || !jobRank.trim() || !jobSalary.trim()) {
+      toast.error("Vul alle verplichte velden in");
+      return;
+    }
+
+    try {
+      const jobData = {
+        job_name: jobName.trim(),
+        job_rank: jobRank.trim(),
+        salary: parseInt(jobSalary),
+        description: jobDescription.trim() || null,
+        job_type: jobType,
+        requirements: jobRequirements.trim() || null,
+        is_active: true,
+        order_index: jobs.length
+      };
+
+      if (editingJob) {
+        const { error } = await supabase
+          .from("jobs")
+          .update(jobData)
+          .eq("id", editingJob.id);
+        
+        if (error) throw error;
+        toast.success("Job bijgewerkt!");
+      } else {
+        const { error } = await supabase
+          .from("jobs")
+          .insert([jobData]);
+        
+        if (error) throw error;
+        toast.success("Job toegevoegd!");
+      }
+
+      // Reset form
+      setJobName("");
+      setJobRank("");
+      setJobSalary("");
+      setJobDescription("");
+      setJobType("civilian");
+      setJobRequirements("");
+      setEditingJob(null);
+      
+      fetchJobs();
+    } catch (error: any) {
+      toast.error("Fout bij opslaan job: " + error.message);
+    }
+  };
+
+  const editJob = (job: Job) => {
+    setEditingJob(job);
+    setJobName(job.job_name);
+    setJobRank(job.job_rank);
+    setJobSalary(job.salary.toString());
+    setJobDescription(job.description || "");
+    setJobType(job.job_type);
+    setJobRequirements(job.requirements || "");
+  };
+
+  const deleteJob = async (jobId: string) => {
+    if (!confirm("Weet je zeker dat je deze job wilt verwijderen?")) return;
+
+    try {
+      const { error } = await supabase
+        .from("jobs")
+        .delete()
+        .eq("id", jobId);
+      
+      if (error) throw error;
+      toast.success("Job verwijderd!");
+      fetchJobs();
+    } catch (error: any) {
+      toast.error("Fout bij verwijderen job: " + error.message);
     }
   };
 
@@ -607,11 +721,12 @@ const SecretAdmin = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="updates">Updates</TabsTrigger>
             <TabsTrigger value="gallery">Gallery</TabsTrigger>
             <TabsTrigger value="team">Team</TabsTrigger>
             <TabsTrigger value="events">Events</TabsTrigger>
+            <TabsTrigger value="jobs">Jobs</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
@@ -1193,6 +1308,191 @@ const SecretAdmin = () => {
                   ))}
                   {events.length === 0 && (
                     <p className="text-muted-foreground text-center">Geen events gevonden.</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Jobs Tab */}
+          <TabsContent value="jobs" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Briefcase className="h-5 w-5" />
+                  {editingJob ? "Job Bewerken" : "Job Toevoegen"}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="job-name">Job Naam</Label>
+                    <Input
+                      id="job-name"
+                      value={jobName}
+                      onChange={(e) => setJobName(e.target.value)}
+                      placeholder="Bijv. Politie, Ambulance..."
+                      required
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="job-rank">Rang</Label>
+                    <Input
+                      id="job-rank"
+                      value={jobRank}
+                      onChange={(e) => setJobRank(e.target.value)}
+                      placeholder="Bijv. Agent, Inspecteur..."
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="job-salary">Salaris (€)</Label>
+                    <Input
+                      id="job-salary"
+                      type="number"
+                      value={jobSalary}
+                      onChange={(e) => setJobSalary(e.target.value)}
+                      placeholder="2500"
+                      required
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="job-type">Job Type</Label>
+                    <Select value={jobType} onValueChange={setJobType}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecteer job type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="government">Overheidsdienst</SelectItem>
+                        <SelectItem value="civilian">Burgerbaan</SelectItem>
+                        <SelectItem value="criminal">Crimineel</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="job-description">Beschrijving</Label>
+                  <Textarea
+                    id="job-description"
+                    value={jobDescription}
+                    onChange={(e) => setJobDescription(e.target.value)}
+                    placeholder="Beschrijving van de job..."
+                    rows={3}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="job-requirements">Vereisten</Label>
+                  <Textarea
+                    id="job-requirements"
+                    value={jobRequirements}
+                    onChange={(e) => setJobRequirements(e.target.value)}
+                    placeholder="Vereisten voor deze job..."
+                    rows={2}
+                  />
+                </div>
+
+                <div className="flex gap-2">
+                  <Button onClick={handleSubmitJob} className="flex-1">
+                    <Save className="mr-2 h-4 w-4" />
+                    {editingJob ? "Bijwerken" : "Job Toevoegen"}
+                  </Button>
+                  {editingJob && (
+                    <Button 
+                      variant="outline" 
+                      onClick={() => {
+                        setEditingJob(null);
+                        setJobName("");
+                        setJobRank("");
+                        setJobSalary("");
+                        setJobDescription("");
+                        setJobType("civilian");
+                        setJobRequirements("");
+                      }}
+                    >
+                      Annuleren
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Jobs Beheren</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {jobs.map((job) => (
+                    <div key={job.id} className="border rounded p-4">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <h3 className="font-semibold text-lg">{job.job_name}</h3>
+                            <Badge 
+                              className={
+                                job.job_type === 'government' ? 'bg-primary text-primary-foreground' :
+                                job.job_type === 'civilian' ? 'bg-secondary text-secondary-foreground' :
+                                'bg-destructive text-destructive-foreground'
+                              }
+                            >
+                              {job.job_type === 'government' ? 'Overheidsdienst' :
+                               job.job_type === 'civilian' ? 'Burgerbaan' : 'Crimineel'}
+                            </Badge>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground">Rang</p>
+                              <p className="font-semibold">{job.job_rank}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground">Salaris</p>
+                              <p className="font-semibold text-primary">€{job.salary.toLocaleString()}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground">Status</p>
+                              <Badge variant={job.is_active ? "default" : "outline"}>
+                                {job.is_active ? "Actief" : "Inactief"}
+                              </Badge>
+                            </div>
+                          </div>
+                          {job.description && (
+                            <p className="text-sm text-muted-foreground mb-2">{job.description}</p>
+                          )}
+                          {job.requirements && (
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground">Vereisten:</p>
+                              <p className="text-sm text-muted-foreground">{job.requirements}</p>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex gap-2 ml-4">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => editJob(job)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button 
+                            variant="destructive" 
+                            size="sm"
+                            onClick={() => deleteJob(job.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {jobs.length === 0 && (
+                    <p className="text-muted-foreground text-center">Geen jobs gevonden.</p>
                   )}
                 </div>
               </CardContent>
