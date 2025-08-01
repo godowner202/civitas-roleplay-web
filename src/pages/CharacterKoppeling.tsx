@@ -87,11 +87,17 @@ const CharacterKoppeling = () => {
 
     setSaving(true);
     try {
+      // Format license to include license2: prefix if not already present
+      let formattedLicense = fivemLicense.trim();
+      if (!formattedLicense.startsWith('license2:')) {
+        formattedLicense = `license2:${formattedLicense}`;
+      }
+
       const { data, error } = await supabase
         .from('player_accounts')
         .upsert({
           user_id: user.id,
-          fivem_license: fivemLicense.trim(),
+          fivem_license: formattedLicense,
           character_name: characterName.trim() || null,
           verified: false
         })
