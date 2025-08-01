@@ -1,4 +1,4 @@
-import Header from "@/components/Header";
+import Layout from "@/components/Layout";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -122,10 +122,8 @@ const Jobs = () => {
   const groupedJobs = groupJobsByName(jobs);
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      
-      <main className="container mx-auto px-4 py-24">
+    <Layout>
+      <div className="container mx-auto px-4 py-8 space-y-8 animate-fade-in">
         {/* Hero Section */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-6xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-6">
@@ -279,10 +277,10 @@ const Jobs = () => {
             </Card>
           </div>
         </section>
-      </main>
+      </div>
 
       <Footer />
-    </div>
+    </Layout>
   );
 };
 

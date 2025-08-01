@@ -1,0 +1,130 @@
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { User, Settings, LogOut, UserPlus, LogIn } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
+
+const UserMenu = () => {
+  const [user, setUser] = useState<SupabaseUser | null>(null);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    // Get current user
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+
+    getUser();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Er is een fout opgetreden bij het uitloggen",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Uitgelogd",
+        description: "Je bent succesvol uitgelogd",
+      });
+      navigate('/');
+    }
+  };
+
+  if (!user) {
+    return (
+      <div className="flex items-center space-x-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          asChild
+          className="text-foreground hover:text-primary"
+        >
+          <Link to="/auth">
+            <LogIn className="h-4 w-4 mr-2" />
+            Inloggen
+          </Link>
+        </Button>
+        <Button
+          variant="default"
+          size="sm"
+          asChild
+          className="bg-primary hover:bg-primary/90"
+        >
+          <Link to="/auth">
+            <UserPlus className="h-4 w-4 mr-2" />
+            Registreren
+          </Link>
+        </Button>
+      </div>
+    );
+  }
+
+  const getInitials = (email: string) => {
+    return email.substring(0, 2).toUpperCase();
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+          <Avatar className="h-9 w-9">
+            <AvatarFallback className="bg-primary/10 text-primary">
+              {getInitials(user.email || "U")}
+            </AvatarFallback>
+          </Avatar>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56 bg-background border border-border z-[60]" align="end" forceMount>
+        <div className="flex flex-col space-y-1 p-2">
+          <p className="text-sm font-medium leading-none">{user.email}</p>
+          <p className="text-xs leading-none text-muted-foreground">
+            Welkom terug!
+          </p>
+        </div>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link to="/character-koppeling" className="cursor-pointer">
+            <User className="mr-2 h-4 w-4" />
+            <span>Karakter Koppelen</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/stats" className="cursor-pointer">
+            <Settings className="mr-2 h-4 w-4" />
+            <span>Mijn Stats</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Uitloggen</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
+export default UserMenu;

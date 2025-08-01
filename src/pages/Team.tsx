@@ -1,4 +1,4 @@
-import Header from "@/components/Header";
+import Layout from "@/components/Layout";
 import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -37,10 +37,8 @@ const teamMembers = [
 
 const Team = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      
-      <main className="container mx-auto px-4 py-24">
+    <Layout>
+      <div className="container mx-auto px-4 py-8 space-y-8 animate-fade-in">
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-6xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-6">
             Ons Team
@@ -93,10 +91,10 @@ const Team = () => {
             </p>
           </div>
         </div>
-      </main>
+      </div>
 
       <Footer />
-    </div>
+    </Layout>
   );
 };
 

@@ -3,10 +3,10 @@ import { Activity, Users, Clock, Server, Wifi, RefreshCw, User, DollarSign, Brie
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import Header from "@/components/Header";
+import Layout from "@/components/Layout";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 interface ServerData {
@@ -156,10 +156,8 @@ const ServerStatus = () => {
   }, [user]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      <Header />
-      
-      <main className="container mx-auto px-4 py-24">
+    <Layout>
+      <main className="container mx-auto px-4 py-8 space-y-8 animate-fade-in">
         <div className="text-center mb-12">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-primary/10 rounded-full mb-6">
             <Server className="h-10 w-10 text-primary" />
@@ -515,7 +513,7 @@ const ServerStatus = () => {
       </main>
       
       <Footer />
-    </div>
+    </Layout>
   );
 };
 

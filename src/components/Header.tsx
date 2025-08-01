@@ -10,21 +10,24 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { ChevronDown, Menu, X } from "lucide-react";
+import UserMenu from "./UserMenu";
 
 const Header = () => {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 w-full z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+    <header className="fixed top-0 w-full z-50 bg-background/95 backdrop-blur-sm border-b border-border animate-fade-in">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center space-x-3">
+        <Link to="/" className="flex items-center space-x-3 hover-scale transition-all duration-300">
           <img 
             src="/lovable-uploads/82dc1462-b853-481b-af5d-319601cd74b0.png" 
             alt="Civitas RP Logo" 
-            className="h-10 w-auto"
+            className="h-10 w-auto transition-transform duration-300 hover:scale-110"
           />
-          <h1 className="text-xl font-bold text-foreground">Civitas RP</h1>
+          <h1 className="text-xl font-bold text-foreground bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+            Civitas RP
+          </h1>
         </Link>
         
         {/* Desktop Navigation */}
@@ -137,7 +140,7 @@ const Header = () => {
             variant="outline" 
             size="sm"
             onClick={() => window.open('cfx.re/join/o8rdar', '_blank')}
-            className="border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground"
+            className="border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-105"
           >
             Join Server
           </Button>
@@ -145,10 +148,11 @@ const Header = () => {
             variant="default" 
             size="sm"
             onClick={() => window.open('https://discord.gg/CivitasRoleplay', '_blank')}
-            className="bg-[#5865F2] hover:bg-[#4752C4] text-white"
+            className="bg-[#5865F2] hover:bg-[#4752C4] text-white transition-all duration-300 hover:scale-105"
           >
             Discord
           </Button>
+          <UserMenu />
         </div>
 
         {/* Mobile Menu Button */}
@@ -162,7 +166,7 @@ const Header = () => {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-background border-b border-border">
+        <div className="lg:hidden bg-background border-b border-border animate-slide-in-right">
           <div className="container mx-auto px-4 py-4 space-y-3">
             <Link 
               to="/" 
@@ -254,7 +258,7 @@ const Header = () => {
                   window.open('cfx.re/join/o8rdar', '_blank');
                   setMobileMenuOpen(false);
                 }}
-                className="w-full border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground"
+                className="w-full border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300"
               >
                 Join Server
               </Button>
@@ -265,10 +269,13 @@ const Header = () => {
                   window.open('https://discord.gg/CivitasRoleplay', '_blank');
                   setMobileMenuOpen(false);
                 }}
-                className="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white"
+                className="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white transition-all duration-300"
               >
                 Discord
               </Button>
+              <div className="w-full flex justify-center pt-2">
+                <UserMenu />
+              </div>
             </div>
           </div>
         </div>

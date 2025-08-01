@@ -45,7 +45,7 @@ const App = () => (
           <Route path="/character-koppeling" element={<CharacterKoppeling />} />
           <Route path="/admin-tools" element={<AdminTools />} />
           <Route path="/sync-manager" element={<SyncManager />} />
-          <Route path="/geheim-admin-123" element={<SecretAdmin />} />
+          <Route path="/civitasadmin" element={<SecretAdmin />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
