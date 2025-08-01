@@ -125,10 +125,13 @@ const Donations = () => {
             <Heart className="h-16 w-16 text-red-500" />
           </div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            Steun Zodus Server
+            Steun Civitas RP
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Help ons de server draaiende te houden en nieuwe content toe te voegen
+          </p>
+          <p className="text-sm text-muted-foreground max-w-2xl mx-auto bg-muted/30 rounded-lg p-3 mt-4">
+            💯 <strong>Transparantie:</strong> Alle donaties gaan 100% terug naar de server. We houden niets voor onszelf en investeren alles in hosting, ontwikkeling en nieuwe features.
           </p>
         </div>
 

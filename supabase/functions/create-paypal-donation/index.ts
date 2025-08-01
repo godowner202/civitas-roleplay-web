@@ -33,7 +33,14 @@ serve(async (req) => {
       body: 'grant_type=client_credentials'
     });
 
+    if (!authResponse.ok) {
+      const errorText = await authResponse.text();
+      console.error('PayPal auth error:', errorText);
+      throw new Error(`PayPal authentication failed: ${authResponse.status}`);
+    }
+
     const authData = await authResponse.json();
+    console.log('PayPal auth response:', authData);
     
     if (!authData.access_token) {
       throw new Error('Failed to get PayPal access token');
@@ -58,7 +65,7 @@ serve(async (req) => {
         application_context: {
           return_url: `${req.headers.get('origin')}/donation-success`,
           cancel_url: `${req.headers.get('origin')}/donations`,
-          brand_name: 'Zodus Server'
+          brand_name: 'Civitas RP'
         }
       })
     });
