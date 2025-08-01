@@ -166,6 +166,30 @@ const SyncManager = () => {
           )}
 
           <div className="flex gap-2 pt-4">
+            <Button 
+              onClick={async () => {
+                setLoading(true);
+                try {
+                  const { data, error } = await supabase.functions.invoke('debug-sync', { body: {} });
+                  if (error) {
+                    toast({ title: "Debug Error", description: error.message, variant: "destructive" });
+                  } else {
+                    toast({ title: "Debug Success", description: "Check logs for detailed info" });
+                  }
+                } catch (e) {
+                  toast({ title: "Debug Failed", description: "See console", variant: "destructive" });
+                } finally {
+                  setLoading(false);
+                }
+              }}
+              variant="secondary" 
+              disabled={loading}
+            >
+              🔍 Debug Single Player
+            </Button>
+          </div>
+
+          <div className="flex gap-2 pt-4">
             <Button variant="outline" asChild className="flex-1">
               <a href="/character-koppeling">→ Character Koppeling</a>
             </Button>
