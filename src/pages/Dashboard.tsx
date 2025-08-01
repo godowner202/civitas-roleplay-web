@@ -46,11 +46,21 @@ interface PlayerAccount {
 
 interface PlayerVehicle {
   id: string;
-  vehicle_plate: string;
-  vehicle_model: string;
-  vehicle_data: any;
-  garage_location: string;
-  stored: boolean;
+  citizenid: string;
+  license: string;
+  vehicle: string;
+  hash: string;
+  mods: any;
+  plate: string;
+  fakeplate: string;
+  garage: string;
+  fuel: number;
+  engine: number;
+  body: number;
+  state: number;
+  depotprice: number;
+  drivingdistance: number;
+  status: string;
 }
 
 const Dashboard = () => {
@@ -114,16 +124,22 @@ const Dashboard = () => {
       
       setPlayerData(playerData);
 
-      // Get player vehicles
-      if (account.fivem_license) {
-        // @ts-ignore - Table exists but types not updated yet
-        const { data: vehicles, error: vehiclesError } = await supabase
-          .from('player_vehicles')
-          .select('*')
-          .eq('license', account.fivem_license);
+      // Get player vehicles from FiveM database using citizenid
+      if (playerData?.citizenid) {
+        try {
+          const { data: vehiclesData, error: vehiclesError } = await supabase.functions.invoke('get-player-vehicles', {
+            body: { citizenid: playerData.citizenid }
+          });
 
-        if (!vehiclesError) {
-          setPlayerVehicles(vehicles || []);
+          if (!vehiclesError && vehiclesData?.success) {
+            setPlayerVehicles(vehiclesData.vehicles || []);
+          } else {
+            console.error('Error fetching vehicles:', vehiclesError);
+            setPlayerVehicles([]);
+          }
+        } catch (error) {
+          console.error('Error calling get-player-vehicles function:', error);
+          setPlayerVehicles([]);
         }
       }
     } catch (error) {
@@ -406,21 +422,25 @@ const Dashboard = () => {
                   <div className="space-y-3">
                     {playerVehicles.map((vehicle) => (
                       <div key={vehicle.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <Car className="h-4 w-4 text-primary" />
-                          <div>
-                            <p className="font-medium">{vehicle.vehicle_model}</p>
-                            <p className="text-sm text-muted-foreground">Kenteken: {vehicle.vehicle_plate}</p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <Badge variant={vehicle.stored ? "secondary" : "destructive"}>
-                            {vehicle.stored ? "In garage" : "Uitgehaald"}
-                          </Badge>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {vehicle.garage_location}
-                          </p>
-                        </div>
+                         <div className="flex items-center gap-3">
+                           <Car className="h-4 w-4 text-primary" />
+                           <div>
+                             <p className="font-medium">{vehicle.vehicle}</p>
+                             <p className="text-sm text-muted-foreground">Kenteken: {vehicle.plate}</p>
+                           </div>
+                         </div>
+                         <div className="text-right">
+                           <Badge variant={vehicle.state === 1 ? "secondary" : "destructive"}>
+                             {vehicle.state === 1 ? "In garage" : "Uitgehaald"}
+                           </Badge>
+                           <p className="text-xs text-muted-foreground mt-1">
+                             {vehicle.garage}
+                           </p>
+                           <div className="text-xs text-muted-foreground mt-1">
+                             <span>Fuel: {Math.round(vehicle.fuel)}%</span>
+                             <span className="ml-2">Engine: {Math.round(vehicle.engine / 10)}%</span>
+                           </div>
+                         </div>
                       </div>
                     ))}
                   </div>
