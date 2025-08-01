@@ -125,6 +125,36 @@ export type Database = {
         }
         Relationships: []
       }
+      player_accounts: {
+        Row: {
+          character_name: string | null
+          created_at: string
+          fivem_license: string
+          id: string
+          updated_at: string
+          user_id: string
+          verified: boolean | null
+        }
+        Insert: {
+          character_name?: string | null
+          created_at?: string
+          fivem_license: string
+          id?: string
+          updated_at?: string
+          user_id: string
+          verified?: boolean | null
+        }
+        Update: {
+          character_name?: string | null
+          created_at?: string
+          fivem_license?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+          verified?: boolean | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           cfx_username: string | null
