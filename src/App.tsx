@@ -18,6 +18,7 @@ import FiveMDatabaseAnalyzer from "./components/FiveMDatabaseAnalyzer";
 import PlayerStats from "./pages/PlayerStats";
 import Auth from "./pages/Auth";
 import CharacterKoppeling from "./pages/CharacterKoppeling";
+import AdminTools from "./pages/AdminTools";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
           <Route path="/stats" element={<PlayerStats />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/character-koppeling" element={<CharacterKoppeling />} />
+          <Route path="/admin-tools" element={<AdminTools />} />
           <Route path="/geheim-admin-123" element={<SecretAdmin />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
