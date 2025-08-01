@@ -27,7 +27,7 @@ serve(async (req) => {
     console.log('Using sandbox environment');
 
     // Determine if we should use sandbox or production
-    const isProduction = false; // Set to true for production
+    const isProduction = true; // Using live credentials
     const baseUrl = isProduction 
       ? 'https://api-m.paypal.com' 
       : 'https://api-m.sandbox.paypal.com';
