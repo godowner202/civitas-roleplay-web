@@ -169,9 +169,8 @@ const Jobs = () => {
                           <CardTitle className="text-lg font-bold text-foreground">
                             {job.job_rank}
                           </CardTitle>
-                          <div className="flex items-center gap-1 text-primary">
-                            <Euro className="w-4 h-4" />
-                            <span className="font-semibold">{formatSalary(job.salary)}</span>
+                          <div className="text-right">
+                            <span className="font-semibold text-primary">{formatSalary(job.salary)}</span>
                           </div>
                         </div>
                       </CardHeader>
