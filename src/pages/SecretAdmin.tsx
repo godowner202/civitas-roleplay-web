@@ -4,10 +4,22 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { X, Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+
+const AVAILABLE_TAGS = [
+  "onderhoud",
+  "nieuwe-feature", 
+  "bugfix",
+  "update",
+  "event",
+  "changelog"
+];
 
 const SecretAdmin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -15,6 +27,9 @@ const SecretAdmin = () => {
   const [password, setPassword] = useState("");
   const [updateTitle, setUpdateTitle] = useState("");
   const [updateContent, setUpdateContent] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [uploadedImage, setUploadedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [updates, setUpdates] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -33,6 +48,28 @@ const SecretAdmin = () => {
     } else {
       toast.error("Verkeerde inloggegevens");
     }
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setUploadedImage(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const addTag = (tag: string) => {
+    if (!selectedTags.includes(tag)) {
+      setSelectedTags([...selectedTags, tag]);
+    }
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    setSelectedTags(selectedTags.filter(tag => tag !== tagToRemove));
   };
 
   const fetchUpdates = async () => {
@@ -57,11 +94,33 @@ const SecretAdmin = () => {
     setSubmitting(true);
 
     try {
+      let imageUrl = null;
+
+      // Upload image if provided
+      if (uploadedImage) {
+        const timestamp = Date.now();
+        const fileName = `update_${timestamp}_${uploadedImage.name}`;
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('update-images')
+          .upload(fileName, uploadedImage);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('update-images')
+          .getPublicUrl(fileName);
+        
+        imageUrl = publicUrl;
+      }
+
       const { error } = await supabase
         .from("server_updates")
         .insert({
           title: updateTitle,
           content: updateContent,
+          tags: selectedTags,
+          image_url: imageUrl,
           author_id: "00000000-0000-0000-0000-000000000000", // Dummy UUID for admin
         });
 
@@ -70,6 +129,9 @@ const SecretAdmin = () => {
       toast.success("Update succesvol gepost!");
       setUpdateTitle("");
       setUpdateContent("");
+      setSelectedTags([]);
+      setUploadedImage(null);
+      setImagePreview(null);
       fetchUpdates();
     } catch (error: any) {
       toast.error("Fout bij posten update: " + error.message);
@@ -191,6 +253,68 @@ const SecretAdmin = () => {
                     required
                   />
                 </div>
+
+                <div className="space-y-2">
+                  <Label>Tags</Label>
+                  <Select onValueChange={addTag}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecteer een tag" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {AVAILABLE_TAGS.map((tag) => (
+                        <SelectItem key={tag} value={tag}>
+                          {tag}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  
+                  {selectedTags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {selectedTags.map((tag) => (
+                        <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+                          {tag}
+                          <X className="h-3 w-3 cursor-pointer" onClick={() => removeTag(tag)} />
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="image">Afbeelding (optioneel)</Label>
+                  <div className="flex items-center gap-4">
+                    <Input
+                      id="image"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                    <Label htmlFor="image" className="cursor-pointer">
+                      <div className="flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-accent">
+                        <Upload className="h-4 w-4" />
+                        Selecteer afbeelding
+                      </div>
+                    </Label>
+                    {imagePreview && (
+                      <div className="relative">
+                        <img 
+                          src={imagePreview} 
+                          alt="Preview" 
+                          className="h-20 w-20 object-cover rounded border"
+                        />
+                        <X 
+                          className="absolute -top-2 -right-2 h-4 w-4 bg-destructive text-destructive-foreground rounded-full cursor-pointer"
+                          onClick={() => {
+                            setUploadedImage(null);
+                            setImagePreview(null);
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
                 
                 <Button type="submit" disabled={submitting}>
                   {submitting ? "Bezig..." : "Update Posten"}
@@ -212,11 +336,27 @@ const SecretAdmin = () => {
                   {updates.map((update) => (
                     <div key={update.id} className="border rounded p-4">
                       <div className="flex justify-between items-start">
-                        <div>
+                        <div className="flex-1">
                           <h3 className="font-semibold">{update.title}</h3>
                           <p className="text-sm text-muted-foreground mb-2">
                             {new Date(update.created_at).toLocaleDateString("nl-NL")}
                           </p>
+                          {update.tags && update.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mb-2">
+                              {update.tags.map((tag: string) => (
+                                <Badge key={tag} variant="outline" className="text-xs">
+                                  {tag}
+                                </Badge>
+                              ))}
+                            </div>
+                          )}
+                          {update.image_url && (
+                            <img 
+                              src={update.image_url} 
+                              alt="Update afbeelding" 
+                              className="w-full max-w-md h-32 object-cover rounded mb-2"
+                            />
+                          )}
                           <p className="text-sm">{update.content}</p>
                         </div>
                         <Button

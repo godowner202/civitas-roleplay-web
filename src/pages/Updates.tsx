@@ -1,152 +1,46 @@
+import { useState, useEffect } from "react";
+import { Calendar, Tag } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Calendar, Tag, CheckCircle, Clock, Star } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
-const updates = [
-  {
-    id: 1,
-    title: "Nieuwe Politie Scripts & Voertuigen",
-    date: "2024-01-25",
-    type: "feature",
-    status: "released",
-    description: "Compleet vernieuwde politie systemen met realistische procedures, nieuwe voertuigen en uitgebreide equipment opties.",
-    highlights: [
-      "5 nieuwe politie voertuigen toegevoegd",
-      "Vernieuwde arrestatie procedures", 
-      "Nieuwe wapens en equipment",
-      "Verbeterde dispatch systeem"
-    ]
-  },
-  {
-    id: 2,
-    title: "Banking Systeem Update",
-    date: "2024-01-20",
-    type: "improvement",
-    status: "released",
-    description: "Grote verbeteringen aan het banking systeem met nieuwe features en verbeterde veiligheid.",
-    highlights: [
-      "Nieuwe loan systeem",
-      "Verbeterde ATM interface",
-      "Creditcard functionaliteit",
-      "Bedrijfsrekeningen ondersteuning"
-    ]
-  },
-  {
-    id: 3,
-    title: "Server Performance Optimalisatie",
-    date: "2024-01-15", 
-    type: "maintenance",
-    status: "released",
-    description: "Uitgebreide server optimalisaties voor betere performance en stabiliteit.",
-    highlights: [
-      "50% lagere ping tijden",
-      "Verbeterde FPS in drukke gebieden",
-      "Minder crashes en disconnects",
-      "Geoptimaliseerde resource loading"
-    ]
-  },
-  {
-    id: 4,
-    title: "Nieuwe Business Systemen",
-    date: "2024-02-01",
-    type: "feature", 
-    status: "upcoming",
-    description: "Uitgebreide business mechanics waarmee spelers hun eigen bedrijven kunnen runnen.",
-    highlights: [
-      "Restaurant management systeem",
-      "Autodealer mechanics",
-      "Vastgoed business opties",
-      "Employee management tools"
-    ]
-  },
-  {
-    id: 5,
-    title: "Custom Clothing & Accessories",
-    date: "2024-02-05",
-    type: "feature",
-    status: "upcoming", 
-    description: "Enorme uitbreiding van kleding opties en accessoires voor betere character customization.",
-    highlights: [
-      "200+ nieuwe kleding items",
-      "Custom accessoires system",
-      "Verbeterde character creator",
-      "Seasonal clothing collecties"
-    ]
-  }
-];
-
-const getTypeColor = (type: string) => {
-  switch (type) {
-    case "feature":
-      return "bg-blue-500/10 text-blue-600 dark:text-blue-400";
-    case "improvement":
-      return "bg-green-500/10 text-green-600 dark:text-green-400";
-    case "maintenance":
-      return "bg-purple-500/10 text-purple-600 dark:text-purple-400";
-    case "bugfix":
-      return "bg-red-500/10 text-red-600 dark:text-red-400";
-    default:
-      return "bg-gray-500/10 text-gray-600 dark:text-gray-400";
-  }
-};
-
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case "released":
-      return "bg-green-500/10 text-green-600 dark:text-green-400";
-    case "upcoming":
-      return "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400";
-    case "in-progress":
-      return "bg-blue-500/10 text-blue-600 dark:text-blue-400";
-    default:
-      return "bg-gray-500/10 text-gray-600 dark:text-gray-400";
-  }
-};
-
-const getStatusIcon = (status: string) => {
-  switch (status) {
-    case "released":
-      return <CheckCircle className="w-4 h-4" />;
-    case "upcoming":
-      return <Clock className="w-4 h-4" />;
-    case "in-progress":
-      return <Star className="w-4 h-4" />;
-    default:
-      return <Clock className="w-4 h-4" />;
-  }
-};
-
-const getTypeLabel = (type: string) => {
-  switch (type) {
-    case "feature":
-      return "Nieuwe Feature";
-    case "improvement":
-      return "Verbetering";
-    case "maintenance":
-      return "Onderhoud";
-    case "bugfix":
-      return "Bug Fix";
-    default:
-      return type;
-  }
-};
-
-const getStatusLabel = (status: string) => {
-  switch (status) {
-    case "released":
-      return "Uitgebracht";
-    case "upcoming":
-      return "Binnenkort";
-    case "in-progress":
-      return "In Ontwikkeling";
-    default:
-      return status;
-  }
+const getTagColor = (tag: string) => {
+  const colors: { [key: string]: string } = {
+    'onderhoud': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+    'nieuwe-feature': 'bg-green-100 text-green-800 border-green-200',
+    'bugfix': 'bg-red-100 text-red-800 border-red-200',
+    'update': 'bg-blue-100 text-blue-800 border-blue-200',
+    'event': 'bg-purple-100 text-purple-800 border-purple-200',
+    'changelog': 'bg-gray-100 text-gray-800 border-gray-200'
+  };
+  return colors[tag] || 'bg-gray-100 text-gray-800 border-gray-200';
 };
 
 const Updates = () => {
+  const [updates, setUpdates] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchUpdates();
+  }, []);
+
+  const fetchUpdates = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("server_updates")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setUpdates(data || []);
+    } catch (error) {
+      console.error("Error fetching updates:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -181,59 +75,58 @@ const Updates = () => {
           </Card>
         </div>
 
-        {/* Updates Timeline */}
-        <div className="space-y-8">
-          {updates.map((update, index) => (
-            <Card key={update.id} className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20">
-              <CardHeader>
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                  <div>
-                    <CardTitle className="text-xl mb-2">{update.title}</CardTitle>
-                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        {new Date(update.date).toLocaleDateString('nl-NL', {
-                          year: 'numeric',
-                          month: 'long', 
-                          day: 'numeric'
+        <div className="space-y-6">
+          {loading ? (
+            <div className="text-center py-8">
+              <p>Updates laden...</p>
+            </div>
+          ) : updates.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">Geen updates beschikbaar.</p>
+            </div>
+          ) : (
+            updates.map((update) => (
+              <Card key={update.id} className="border-l-4 border-l-primary">
+                <CardHeader className="pb-4">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-2">
+                      <CardTitle className="text-xl">{update.title}</CardTitle>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Calendar className="h-4 w-4" />
+                        {new Date(update.created_at).toLocaleDateString("nl-NL", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric"
                         })}
                       </div>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <Badge className={getTypeColor(update.type)}>
-                      <Tag className="w-3 h-3 mr-1" />
-                      {getTypeLabel(update.type)}
-                    </Badge>
-                    <Badge className={getStatusColor(update.status)}>
-                      {getStatusIcon(update.status)}
-                      <span className="ml-1">{getStatusLabel(update.status)}</span>
-                    </Badge>
-                  </div>
-                </div>
-              </CardHeader>
-              
-              <CardContent>
-                <p className="text-muted-foreground mb-6 leading-relaxed">
-                  {update.description}
-                </p>
-                
-                {update.highlights && update.highlights.length > 0 && (
-                  <div>
-                    <h4 className="font-semibold text-foreground mb-3">Highlights:</h4>
-                    <ul className="grid md:grid-cols-2 gap-2">
-                      {update.highlights.map((highlight, highlightIndex) => (
-                        <li key={highlightIndex} className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <div className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0"></div>
-                          {highlight}
-                        </li>
+                  
+                  {update.tags && update.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      {update.tags.map((tag: string) => (
+                        <Badge key={tag} className={getTagColor(tag)}>
+                          <Tag className="h-3 w-3 mr-1" />
+                          {tag}
+                        </Badge>
                       ))}
-                    </ul>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
+                    </div>
+                  )}
+                </CardHeader>
+                
+                <CardContent>
+                  {update.image_url && (
+                    <img 
+                      src={update.image_url} 
+                      alt="Update afbeelding" 
+                      className="w-full max-w-2xl h-64 object-cover rounded-lg mb-4"
+                    />
+                  )}
+                  <p className="text-muted-foreground mb-4">{update.content}</p>
+                </CardContent>
+              </Card>
+            ))
+          )}
         </div>
 
         {/* Footer Call to Action */}
