@@ -173,8 +173,14 @@ const Dashboard = () => {
   };
 
   const totalMoney = (playerData?.cash || 0) + (playerData?.bank || 0);
-  const jobInfo = playerData?.job ? JSON.parse(playerData.job) : null;
-  const charInfo = playerData?.charinfo ? JSON.parse(playerData.charinfo) : null;
+  
+  // Safe JSON parsing - check if it's already an object or a string
+  const jobInfo = playerData?.job 
+    ? (typeof playerData.job === 'string' ? JSON.parse(playerData.job) : playerData.job)
+    : null;
+  const charInfo = playerData?.charinfo 
+    ? (typeof playerData.charinfo === 'string' ? JSON.parse(playerData.charinfo) : playerData.charinfo)
+    : null;
 
   return (
     <>
