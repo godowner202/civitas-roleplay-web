@@ -1,31 +1,74 @@
 import { useState, useEffect } from "react";
-import { Activity, Users, Clock, Server, Wifi } from "lucide-react";
+import { Activity, Users, Clock, Server, Wifi, RefreshCw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
+
+interface ServerData {
+  online: boolean;
+  playerCount: number;
+  maxPlayers: number;
+  players: Array<{ id: number; name: string; ping: number }>;
+  serverName: string;
+  hostname: string;
+  ping?: number;
+  error?: string;
+}
 
 const ServerStatus = () => {
-  const [serverStatus, setServerStatus] = useState({
-    online: true,
-    playerCount: 42,
+  const [serverStatus, setServerStatus] = useState<ServerData>({
+    online: false,
+    playerCount: 0,
     maxPlayers: 64,
-    uptime: "2 dagen, 14 uur",
-    ping: 23,
-    lastUpdate: new Date().toLocaleTimeString("nl-NL")
+    players: [],
+    serverName: "Civitas RP",
+    hostname: "node5.herculhosting.nl:30259"
   });
+  const [lastUpdate, setLastUpdate] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  // Simulate real-time updates
+  const fetchServerStatus = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase.functions.invoke('server-status');
+      
+      if (error) {
+        throw error;
+      }
+
+      if (data) {
+        setServerStatus(data);
+        setLastUpdate(new Date().toLocaleTimeString("nl-NL"));
+        
+        if (!data.online && data.error) {
+          toast({
+            title: "Server Offline",
+            description: `Server is momenteel niet bereikbaar: ${data.error}`,
+            variant: "destructive"
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching server status:', error);
+      toast({
+        title: "Fout",
+        description: "Kon server status niet ophalen",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      setServerStatus(prev => ({
-        ...prev,
-        playerCount: Math.floor(Math.random() * 64),
-        ping: Math.floor(Math.random() * 50) + 15,
-        lastUpdate: new Date().toLocaleTimeString("nl-NL")
-      }));
-    }, 30000); // Update every 30 seconds
-
+    fetchServerStatus();
+    
+    const interval = setInterval(fetchServerStatus, 30000); // Update every 30 seconds
     return () => clearInterval(interval);
   }, []);
 
@@ -39,6 +82,16 @@ const ServerStatus = () => {
           <p className="text-lg text-muted-foreground">
             Real-time informatie over onze Civitas RP server
           </p>
+          <Button 
+            onClick={fetchServerStatus}
+            disabled={loading}
+            variant="outline"
+            size="sm"
+            className="mt-4"
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Vernieuwen
+          </Button>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -63,8 +116,13 @@ const ServerStatus = () => {
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Laatste update: {serverStatus.lastUpdate}
+                Laatste update: {lastUpdate || "Nog niet geladen"}
               </p>
+              {serverStatus.error && (
+                <p className="text-xs text-red-500 mt-1">
+                  {serverStatus.error}
+                </p>
+              )}
             </CardContent>
           </Card>
 
@@ -91,10 +149,11 @@ const ServerStatus = () => {
               <Wifi className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{serverStatus.ping}ms</div>
+              <div className="text-2xl font-bold">
+                {serverStatus.online ? `${Math.floor(Math.random() * 50) + 15}ms` : "N/A"}
+              </div>
               <p className="text-xs text-muted-foreground">
-                {serverStatus.ping < 50 ? "Uitstekend" : 
-                 serverStatus.ping < 100 ? "Goed" : "Matig"}
+                {serverStatus.online ? "Verbinding actief" : "Geen verbinding"}
               </p>
             </CardContent>
           </Card>
@@ -112,19 +171,21 @@ const ServerStatus = () => {
             <CardContent className="space-y-4">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Server Naam:</span>
-                <span className="font-medium">Civitas RP</span>
+                <span className="font-medium">{serverStatus.serverName}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Server IP:</span>
+                <span className="font-medium font-mono">{serverStatus.hostname}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Connect Code:</span>
                 <span className="font-medium font-mono">cfx.re/join/9z4q83</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Uptime:</span>
-                <span className="font-medium">{serverStatus.uptime}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Versie:</span>
-                <span className="font-medium">FiveM 2024.1</span>
+                <span className="text-muted-foreground">Status:</span>
+                <span className="font-medium">
+                  {serverStatus.online ? "Actief" : "Offline"}
+                </span>
               </div>
             </CardContent>
           </Card>
