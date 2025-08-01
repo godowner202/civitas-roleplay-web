@@ -53,6 +53,72 @@ export type Database = {
         }
         Relationships: []
       }
+      fivem_players: {
+        Row: {
+          bank: number | null
+          cash: number | null
+          charinfo: Json | null
+          cid: number | null
+          citizenid: string | null
+          created_at: string
+          firstname: string | null
+          fivem_id: number | null
+          id: number
+          job: Json | null
+          job_grade_name: string | null
+          job_name: string | null
+          lastname: string | null
+          license: string
+          money: Json | null
+          name: string | null
+          synced_at: string
+          updated_at: string
+          userid: number | null
+        }
+        Insert: {
+          bank?: number | null
+          cash?: number | null
+          charinfo?: Json | null
+          cid?: number | null
+          citizenid?: string | null
+          created_at?: string
+          firstname?: string | null
+          fivem_id?: number | null
+          id?: number
+          job?: Json | null
+          job_grade_name?: string | null
+          job_name?: string | null
+          lastname?: string | null
+          license: string
+          money?: Json | null
+          name?: string | null
+          synced_at?: string
+          updated_at?: string
+          userid?: number | null
+        }
+        Update: {
+          bank?: number | null
+          cash?: number | null
+          charinfo?: Json | null
+          cid?: number | null
+          citizenid?: string | null
+          created_at?: string
+          firstname?: string | null
+          fivem_id?: number | null
+          id?: number
+          job?: Json | null
+          job_grade_name?: string | null
+          job_name?: string | null
+          lastname?: string | null
+          license?: string
+          money?: Json | null
+          name?: string | null
+          synced_at?: string
+          updated_at?: string
+          userid?: number | null
+        }
+        Relationships: []
+      }
       gallery_items: {
         Row: {
           created_at: string

@@ -19,6 +19,7 @@ import PlayerStats from "./pages/PlayerStats";
 import Auth from "./pages/Auth";
 import CharacterKoppeling from "./pages/CharacterKoppeling";
 import AdminTools from "./pages/AdminTools";
+import SyncManager from "./pages/SyncManager";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/character-koppeling" element={<CharacterKoppeling />} />
           <Route path="/admin-tools" element={<AdminTools />} />
+          <Route path="/sync-manager" element={<SyncManager />} />
           <Route path="/geheim-admin-123" element={<SecretAdmin />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
