@@ -304,13 +304,6 @@ const CharacterKoppeling = () => {
                 </div>
 
                 <div className="flex gap-3">
-                  <Button asChild className="flex-1">
-                    <a href="/stats">
-                      <User className="mr-2 h-4 w-4" />
-                      Bekijk Mijn Stats
-                    </a>
-                  </Button>
-                  
                   <Button 
                     variant="outline"
                     onClick={() => {
@@ -319,6 +312,7 @@ const CharacterKoppeling = () => {
                       setFirstName("");
                       setLastName("");
                     }}
+                    className="flex-1"
                   >
                     Character Wijzigen
                   </Button>

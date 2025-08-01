@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { User, Settings, LogOut, UserPlus, LogIn } from "lucide-react";
+import { User, LogOut, UserPlus, LogIn, Unlink } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -16,6 +16,8 @@ import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 const UserMenu = () => {
   const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [playerAccount, setPlayerAccount] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -24,6 +26,17 @@ const UserMenu = () => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
+      
+      if (user) {
+        // Check for linked character
+        const { data: accounts } = await supabase
+          .from('player_accounts')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('verified', true);
+        
+        setPlayerAccount(accounts && accounts.length > 0 ? accounts[0] : null);
+      }
     };
 
     getUser();
@@ -31,10 +44,51 @@ const UserMenu = () => {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      if (!session?.user) {
+        setPlayerAccount(null);
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const handleUnlinkCharacter = async () => {
+    if (!user || !playerAccount) return;
+
+    const confirmed = confirm(
+      "Weet je zeker dat je je character wilt ontkoppelen? Je zult opnieuw moeten koppelen om toegang te krijgen tot je character informatie."
+    );
+
+    if (!confirmed) return;
+
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('player_accounts')
+        .delete()
+        .eq('id', playerAccount.id)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      setPlayerAccount(null);
+      
+      toast({
+        title: "Character ontkoppeld",
+        description: "Je character is succesvol ontkoppeld van je account",
+      });
+
+    } catch (error: any) {
+      console.error('Error unlinking character:', error);
+      toast({
+        title: "Ontkoppeling mislukt",
+        description: "Er is een fout opgetreden bij het ontkoppelen van je character",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
@@ -111,12 +165,16 @@ const UserMenu = () => {
             <span>Karakter Koppelen</span>
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link to="/stats" className="cursor-pointer">
-            <Settings className="mr-2 h-4 w-4" />
-            <span>Mijn Stats</span>
-          </Link>
-        </DropdownMenuItem>
+        {playerAccount && (
+          <DropdownMenuItem 
+            onClick={handleUnlinkCharacter} 
+            className="cursor-pointer text-destructive hover:text-destructive"
+            disabled={loading}
+          >
+            <Unlink className="mr-2 h-4 w-4" />
+            <span>{loading ? "Ontkoppelen..." : "Character Ontkoppelen"}</span>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
           <LogOut className="mr-2 h-4 w-4" />

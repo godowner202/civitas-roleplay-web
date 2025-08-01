@@ -193,10 +193,6 @@ const SyncManager = () => {
             <Button variant="outline" asChild className="flex-1">
               <a href="/character-koppeling">→ Character Koppeling</a>
             </Button>
-            
-            <Button variant="outline" asChild className="flex-1">
-              <a href="/mijn-stats">→ Mijn Stats Testen</a>
-            </Button>
           </div>
         </CardContent>
       </Card>
