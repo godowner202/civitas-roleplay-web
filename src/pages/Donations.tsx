@@ -33,31 +33,41 @@ const Donations = () => {
   }, []);
 
   const fetchDonations = async () => {
-    const { data, error } = await supabase
-      .from('donations')
-      .select('*')
-      .eq('status', 'completed')
-      .order('created_at', { ascending: false })
-      .limit(10);
+    try {
+      // @ts-ignore - Table exists but types not updated yet
+      const { data, error } = await supabase
+        .from('donations')
+        .select('*')
+        .eq('status', 'completed')
+        .order('created_at', { ascending: false })
+        .limit(10);
 
-    if (error) {
+      if (error) {
+        console.error('Error fetching donations:', error);
+      } else {
+        setDonations(data || []);
+      }
+    } catch (error) {
       console.error('Error fetching donations:', error);
-    } else {
-      setDonations(data || []);
     }
   };
 
   const fetchStats = async () => {
-    const { data, error } = await supabase
-      .from('donations')
-      .select('amount')
-      .eq('status', 'completed');
+    try {
+      // @ts-ignore - Table exists but types not updated yet
+      const { data, error } = await supabase
+        .from('donations')
+        .select('amount')
+        .eq('status', 'completed');
 
-    if (error) {
+      if (error) {
+        console.error('Error fetching stats:', error);
+      } else {
+        const total = data?.reduce((sum: any, d: any) => sum + Number(d.amount), 0) || 0;
+        setStats({ total, count: data?.length || 0 });
+      }
+    } catch (error) {
       console.error('Error fetching stats:', error);
-    } else {
-      const total = data?.reduce((sum, d) => sum + d.amount, 0) || 0;
-      setStats({ total, count: data?.length || 0 });
     }
   };
 

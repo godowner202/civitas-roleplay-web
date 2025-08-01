@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      donations: {
+        Row: {
+          amount: number
+          created_at: string
+          donor_name: string
+          id: string
+          message: string | null
+          paypal_order_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          donor_name: string
+          id?: string
+          message?: string | null
+          paypal_order_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          donor_name?: string
+          id?: string
+          message?: string | null
+          paypal_order_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       events: {
         Row: {
           created_at: string
