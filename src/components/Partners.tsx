@@ -53,7 +53,7 @@ const Partners = () => {
                   className="hover:bg-primary hover:text-primary-foreground"
                 >
                   <ExternalLink className="mr-2 h-4 w-4" />
-                  Hun Discord
+                  Join de BMT Discord
                 </Button>
               </div>
             </div>

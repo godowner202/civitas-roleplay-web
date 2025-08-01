@@ -30,7 +30,7 @@ const Rules = () => {
               </div>
               <div className="flex items-start gap-3">
                 <div className="h-2 w-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                <p className="text-foreground">Nederlands of Engels in de chat</p>
+                <p className="text-foreground">Alleen Nederlands toegestaan in de chat</p>
               </div>
               <div className="flex items-start gap-3">
                 <div className="h-2 w-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
@@ -38,7 +38,7 @@ const Rules = () => {
               </div>
               <div className="flex items-start gap-3">
                 <div className="h-2 w-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                <p className="text-foreground">Minimumleeftijd van 16 jaar</p>
+                <p className="text-foreground">Minimumleeftijd van 13 jaar</p>
               </div>
               <div className="flex items-start gap-3">
                 <div className="h-2 w-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>

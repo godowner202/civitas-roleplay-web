@@ -2,89 +2,12 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { 
-  Shield, 
-  Heart, 
-  Gavel, 
-  Car, 
-  Wrench, 
-  Truck, 
-  Building, 
-  DollarSign,
-  Users,
-  Briefcase
+  ExternalLink,
+  Construction,
+  Building
 } from "lucide-react";
-
-const jobs = [
-  {
-    category: "Beschikbare Overheidsdiensten",
-    color: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
-    jobs: [
-      {
-        title: "Politie Agent",
-        icon: Shield,
-        description: "Handhaaf de wet en orde in Los Santos. Patrouilleer, onderzoek misdaden en bescherm de burgers.",
-        salary: "€2.500 - €4.000",
-        requirements: ["18+ jaar", "Nederlands spreken", "Microfoon verplicht"],
-        available: true
-      },
-      {
-        title: "Ambulance Medewerker",
-        icon: Heart,
-        description: "Red levens als paramedicus of arts. Reageer op noodoproepen en verzorg gewonde burgers.",
-        salary: "€2.200 - €3.500",
-        requirements: ["Eerste hulp kennis", "Stressbestendig", "Teamspeler"],
-        available: true
-      },
-      {
-        title: "Advocaat",
-        icon: Gavel,
-        description: "Verdedig burgers voor de rechtbank. Behandel rechtszaken en geef juridisch advies.",
-        salary: "€3.000 - €5.000",
-        requirements: ["Goede communicatie", "Juridische interesse", "Overtuigingskracht"],
-        available: true
-      }
-    ]
-  }
-];
-
-const businessOpportunities = [
-  {
-    title: "Tuning Garage",
-    icon: Wrench,
-    description: "Start je eigen tuning garage en modificeer voertuigen voor klanten.",
-    requirements: ["Startkapitaal", "Technische kennis", "Bedrijfslocatie"]
-  },
-  {
-    title: "Mechanic Shop",
-    icon: Car,
-    description: "Open een reparatiewerkplaats en help burgers met autopech.",
-    requirements: ["Startkapitaal", "Reparatie skills", "Goede locatie"]
-  }
-];
-
-const economyFeatures = [
-  {
-    title: "Realistische Economie",
-    description: "Een uitgebalanceerd economisch systeem met inflatie, belastingen en marktdynamiek.",
-    icon: DollarSign
-  },
-  {
-    title: "Bedrijven Oprichten",
-    description: "Start je eigen bedrijf en word ondernemer. Van restaurants tot autobedrijven.",
-    icon: Briefcase
-  },
-  {
-    title: "Banking Systeem",
-    description: "Compleet banksysteem met rekeningen, leningen, investeringen en creditcards.",
-    icon: Building
-  },
-  {
-    title: "Sociale Economie",
-    description: "Werk samen met andere spelers voor grote projecten en economische groei.",
-    icon: Users
-  }
-];
 
 const Jobs = () => {
   return (
@@ -103,149 +26,115 @@ const Jobs = () => {
           </p>
         </div>
 
-        {/* Jobs Section */}
+        {/* Coming Soon Section */}
         <section className="mb-20">
-          <h2 className="text-3xl font-bold text-center mb-12">Beschikbare Banen</h2>
-          
-          {jobs.map((category, categoryIndex) => (
-            <div key={categoryIndex} className="mb-12">
-              <div className="flex items-center gap-3 mb-6">
-                <Badge className={category.color}>
-                  {category.category}
-                </Badge>
-              </div>
-              
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {category.jobs.map((job, jobIndex) => {
-                  const IconComponent = job.icon;
-                  return (
-                    <Card key={jobIndex} className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20">
-                      <CardHeader>
-                        <div className="flex items-center gap-3 mb-2">
-                          <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                            <IconComponent className="w-5 h-5 text-primary-foreground" />
-                          </div>
-                          <CardTitle className="text-foreground flex items-center gap-2">
-                            {job.title}
-                            <Badge className="bg-green-500/10 text-green-600">Beschikbaar</Badge>
-                          </CardTitle>
-                        </div>
-                        <Badge variant="outline" className="w-fit text-primary border-primary/20">
-                          {job.salary}
-                        </Badge>
-                      </CardHeader>
-                      
-                      <CardContent>
-                        <p className="text-muted-foreground mb-4 leading-relaxed">
-                          {job.description}
-                        </p>
-                        
-                        <div>
-                          <h4 className="font-semibold text-foreground mb-2">Vereisten:</h4>
-                          <ul className="space-y-1">
-                            {job.requirements.map((req, reqIndex) => (
-                              <li key={reqIndex} className="text-sm text-muted-foreground flex items-center gap-2">
-                                <div className="w-1 h-1 bg-primary rounded-full"></div>
-                                {req}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </section>
+          <div className="max-w-4xl mx-auto">
+            <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
+              <CardContent className="p-12 text-center">
+                <div className="w-20 h-20 mx-auto bg-gradient-primary rounded-full flex items-center justify-center mb-6">
+                  <Construction className="w-10 h-10 text-primary-foreground" />
+                </div>
+                
+                <h2 className="text-3xl font-bold text-foreground mb-4">
+                  Jobs & Economie System in Ontwikkeling
+                </h2>
+                
+                <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+                  We werken hard aan een compleet job- en economiesysteem voor Civitas RP. 
+                  Binnenkort kunnen spelers kiezen uit diverse carrièremogelijkheden, 
+                  van overheidsdiensten tot eigen bedrijven starten.
+                </p>
 
-        {/* Business Opportunities Section */}
-        <section className="mb-20">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Eigen Bedrijf Starten</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Wil je ondernemer worden? Start je eigen bedrijf en bouw je financiële imperium op!
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6 mb-12">
-            {businessOpportunities.map((business, index) => {
-              const IconComponent = business.icon;
-              return (
-                <Card key={index} className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20">
-                  <CardHeader>
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <IconComponent className="w-5 h-5 text-primary-foreground" />
-                      </div>
-                      <CardTitle className="text-foreground flex items-center gap-2">
-                        {business.title}
-                        <Badge className="bg-yellow-500/10 text-yellow-600">Eigen Bedrijf</Badge>
-                      </CardTitle>
-                    </div>
-                  </CardHeader>
+                <div className="grid md:grid-cols-3 gap-4 mb-8">
+                  <div className="bg-card/50 border border-border/50 rounded-lg p-4">
+                    <Building className="w-8 h-8 text-primary mx-auto mb-2" />
+                    <h3 className="font-semibold text-foreground mb-1">Overheidsdiensten</h3>
+                    <p className="text-sm text-muted-foreground">Politie, Ambulance, Brandweer</p>
+                  </div>
                   
-                  <CardContent>
-                    <p className="text-muted-foreground mb-4 leading-relaxed">
-                      {business.description}
-                    </p>
+                  <div className="bg-card/50 border border-border/50 rounded-lg p-4">
+                    <Building className="w-8 h-8 text-accent mx-auto mb-2" />
+                    <h3 className="font-semibold text-foreground mb-1">Burgerbanen</h3>
+                    <p className="text-sm text-muted-foreground">Taxi, Monteur, Winkelier</p>
+                  </div>
+                  
+                  <div className="bg-card/50 border border-border/50 rounded-lg p-4">
+                    <Building className="w-8 h-8 text-neon-green mx-auto mb-2" />
+                    <h3 className="font-semibold text-foreground mb-1">Ondernemerschap</h3>
+                    <p className="text-sm text-muted-foreground">Eigen bedrijven starten</p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <Badge variant="secondary" className="bg-primary/10 text-primary text-base px-4 py-2">
+                    🚧 Binnenkort beschikbaar!
+                  </Badge>
+                  
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <Button 
+                      variant="outline"
+                      onClick={() => window.open('https://discord.gg/CivitasRoleplay', '_blank')}
+                      className="border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground"
+                    >
+                      <ExternalLink className="mr-2 h-4 w-4" />
+                      Volg Updates op Discord
+                    </Button>
                     
-                    <div>
-                      <h4 className="font-semibold text-foreground mb-2">Vereisten:</h4>
-                      <ul className="space-y-1">
-                        {business.requirements.map((req, reqIndex) => (
-                          <li key={reqIndex} className="text-sm text-muted-foreground flex items-center gap-2">
-                            <div className="w-1 h-1 bg-primary rounded-full"></div>
-                            {req}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
+                    <Button 
+                      onClick={() => window.open('cfx.re/join/o8rdar', '_blank')}
+                      className="bg-primary hover:bg-primary/90"
+                    >
+                      Join Server Nu
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </section>
 
-        {/* Economy Section */}
-        <section>
+        {/* Preview Features */}
+        <section className="mb-20">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Economisch Systeem</h2>
+            <h2 className="text-3xl font-bold mb-4">Wat Je Kunt Verwachten</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Ervaar een realistische economie waar jouw keuzes en acties echte gevolgen hebben voor je financiële toekomst.
+              Een voorproefje van het uitgebreide jobs & economie systeem dat eraan komt.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            {economyFeatures.map((feature, index) => {
-              const IconComponent = feature.icon;
-              return (
-                <Card key={index} className="text-center group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20">
-                  <CardContent className="p-6">
-                    <div className="w-12 h-12 mx-auto bg-gradient-primary rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                      <IconComponent className="w-6 h-6 text-primary-foreground" />
-                    </div>
-                    <h3 className="font-bold text-foreground mb-2">{feature.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {feature.description}
-                    </p>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card className="hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20">
+              <CardHeader>
+                <CardTitle className="text-foreground">Realistische Salarissen</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Verdien realistische lonen gebaseerd op je job en prestaties in de roleplay wereld.
+                </p>
+              </CardContent>
+            </Card>
 
-          <div className="bg-card border border-border/50 rounded-2xl p-8 text-center">
-            <h3 className="text-2xl font-bold text-foreground mb-4">Klaar om je carrière te starten?</h3>
-            <p className="text-muted-foreground mb-6">
-              Word lid van Civitas RP en begin vandaag nog met het opbouwen van jouw virtuele toekomst. 
-              Talloze mogelijkheden wachten op je!
-            </p>
-            <Badge variant="secondary" className="bg-primary/10 text-primary">
-              🚧 Meer banen komen binnenkort!
-            </Badge>
+            <Card className="hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20">
+              <CardHeader>
+                <CardTitle className="text-foreground">Banking Systeem</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Compleet banksysteem met rekeningen, leningen en investeringsmogelijkheden.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20">
+              <CardHeader>
+                <CardTitle className="text-foreground">Carrière Progressie</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Klim op in je gekozen beroep en ontwikkel jezelf van beginneling tot expert.
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </section>
       </main>
