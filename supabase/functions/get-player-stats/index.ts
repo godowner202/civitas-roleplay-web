@@ -95,15 +95,14 @@ serve(async (req) => {
       });
     }
 
-    // Get specific player by identifier - start simple
-    console.log('Fetching specific player data...');
+    // Get specific player by license from players table
+    console.log('Searching for player with license:', playerId);
     
-    // Try a simple search first
     const playerResult = await client.execute(`
       SELECT * FROM players 
-      WHERE identifier LIKE ? OR identifier = ?
+      WHERE license = ?
       LIMIT 1
-    `, [`%${playerId}%`, playerId]);
+    `, [playerId]);
 
     if (playerResult.rows && playerResult.rows.length > 0) {
       const row = playerResult.rows[0];
