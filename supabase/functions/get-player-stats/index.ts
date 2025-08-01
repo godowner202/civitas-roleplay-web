@@ -74,14 +74,47 @@ serve(async (req) => {
     if (!playerId) {
       console.log('Fetching all players...');
       
-      // Start with a simple query to test connection
       const playersResult = await client.execute(`SELECT * FROM players LIMIT 20`);
 
       const players = (playersResult.rows || []).map((row: any) => {
-        const player: any = {};
-        playersResult.fields?.forEach((field, index) => {
-          player[field.name] = row[index];
-        });
+        // Parse the data based on column positions
+        const player: any = {
+          id: row[0],           // Column 1: id
+          userid: row[1],       // Column 2: userid  
+          citizenid: row[2],    // Column 3: citizenid
+          cid: row[3],          // Column 4: cid
+          license: row[4],      // Column 5: license
+          name: row[5],         // Column 6: name
+          money: row[6],        // Column 7: money (JSON)
+          charinfo: row[7]      // Column 8: charinfo (JSON)
+        };
+
+        // Parse JSON data
+        try {
+          if (player.money && typeof player.money === 'string') {
+            player.moneyData = JSON.parse(player.money);
+            player.cash = player.moneyData.cash || 0;
+            player.bank = player.moneyData.bank || 0;
+          }
+        } catch (e) {
+          console.log('Error parsing money JSON for player:', player.license);
+          player.cash = 0;
+          player.bank = 0;
+        }
+
+        try {
+          if (player.charinfo && typeof player.charinfo === 'string') {
+            player.charinfoData = JSON.parse(player.charinfo);
+            player.firstname = player.charinfoData.firstname;
+            player.lastname = player.charinfoData.lastname;
+            player.job = player.charinfoData.job?.name;
+            player.job_grade = player.charinfoData.job?.grade?.level;
+            player.job_grade_name = player.charinfoData.job?.grade?.name;
+          }
+        } catch (e) {
+          console.log('Error parsing charinfo JSON for player:', player.license);
+        }
+
         return player;
       });
 
@@ -106,48 +139,64 @@ serve(async (req) => {
 
     if (playerResult.rows && playerResult.rows.length > 0) {
       const row = playerResult.rows[0];
-      playerStats = {};
       
-      playerResult.fields?.forEach((field, index) => {
-        playerStats![field.name] = row[index];
-      });
+      // Parse the data based on your database structure
+      playerStats = {
+        id: row[0],           // Column 1: id
+        userid: row[1],       // Column 2: userid  
+        citizenid: row[2],    // Column 3: citizenid
+        cid: row[3],          // Column 4: cid
+        license: row[4],      // Column 5: license
+        name: row[5],         // Column 6: name
+        money: row[6],        // Column 7: money (JSON)
+        charinfo: row[7]      // Column 8: charinfo (JSON)
+      };
 
-      // Try to get additional data from other tables if they exist
+      console.log('Found player:', playerStats.name, 'with license:', playerStats.license);
+
+      // Parse JSON data from money column (kolom 7)
       try {
-        // Check for job data
-        if (playerStats.job) {
-          const jobResult = await client.execute(`
-            SELECT * FROM jobs WHERE name = ? LIMIT 1
-          `, [playerStats.job]);
+        if (playerStats.money && typeof playerStats.money === 'string') {
+          const moneyData = JSON.parse(playerStats.money);
+          playerStats.cash = moneyData.cash || 0;
+          playerStats.bank = moneyData.bank || 0;
+          playerStats.crypto = moneyData.crypto || 0;
+          console.log('Parsed money data:', { cash: playerStats.cash, bank: playerStats.bank });
+        }
+      } catch (e) {
+        console.log('Error parsing money JSON:', e);
+        playerStats.cash = 0;
+        playerStats.bank = 0;
+      }
+
+      // Parse JSON data from charinfo column (kolom 8)
+      try {
+        if (playerStats.charinfo && typeof playerStats.charinfo === 'string') {
+          const charinfoData = JSON.parse(playerStats.charinfo);
+          playerStats.firstname = charinfoData.firstname;
+          playerStats.lastname = charinfoData.lastname;
+          playerStats.birthdate = charinfoData.birthdate;
+          playerStats.sex = charinfoData.sex;
+          playerStats.nationality = charinfoData.nationality;
+          playerStats.phone = charinfoData.phone;
           
-          if (jobResult.rows && jobResult.rows.length > 0) {
-            const jobRow = jobResult.rows[0];
-            const jobData: any = {};
-            jobResult.fields?.forEach((field, index) => {
-              jobData[field.name] = jobRow[index];
-            });
-            playerStats.jobData = jobData;
+          // Job information
+          if (charinfoData.job) {
+            playerStats.job = charinfoData.job.name;
+            playerStats.job_label = charinfoData.job.label;
+            playerStats.job_grade = charinfoData.job.grade?.level;
+            playerStats.job_grade_name = charinfoData.job.grade?.name;
+            playerStats.job_payment = charinfoData.job.payment;
           }
-        }
-
-        // Check for vehicles
-        const vehicleResult = await client.execute(`
-          SELECT * FROM owned_vehicles WHERE owner = ? LIMIT 10
-        `, [playerStats.identifier || playerId]);
-        
-        if (vehicleResult.rows && vehicleResult.rows.length > 0) {
-          const vehicles = vehicleResult.rows.map((row: any) => {
-            const vehicle: any = {};
-            vehicleResult.fields?.forEach((field, index) => {
-              vehicle[field.name] = row[index];
-            });
-            return vehicle;
+          
+          console.log('Parsed character data:', {
+            name: `${playerStats.firstname} ${playerStats.lastname}`,
+            job: playerStats.job,
+            job_grade: playerStats.job_grade_name
           });
-          playerStats.vehicles = vehicles;
         }
-
-      } catch (additionalError) {
-        console.log('Could not fetch additional data:', additionalError);
+      } catch (e) {
+        console.log('Error parsing charinfo JSON:', e);
       }
     }
 
