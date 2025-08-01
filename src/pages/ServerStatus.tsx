@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Activity, Users, Clock, Server, Wifi, RefreshCw } from "lucide-react";
+import { Activity, Users, Clock, Server, Wifi, RefreshCw, User, DollarSign, Briefcase } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 interface ServerData {
   online: boolean;
@@ -19,7 +20,22 @@ interface ServerData {
   error?: string;
 }
 
+interface CharacterData {
+  license: string;
+  name: string;
+  firstname: string;
+  lastname: string;
+  cash: number;
+  bank: number;
+  job_name: string;
+  job_grade_name: string;
+  citizenid: string;
+}
+
 const ServerStatus = () => {
+  const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [characterData, setCharacterData] = useState<CharacterData | null>(null);
+  const [characterLoading, setCharacterLoading] = useState(false);
   const [serverStatus, setServerStatus] = useState<ServerData>({
     online: false,
     playerCount: 0,
@@ -65,12 +81,79 @@ const ServerStatus = () => {
     }
   };
 
+  const fetchCharacterData = async () => {
+    if (!user) return;
+    
+    setCharacterLoading(true);
+    try {
+      // First get player account to find the license
+      const { data: playerAccount, error: accountError } = await supabase
+        .from('player_accounts')
+        .select('fivem_license, verified')
+        .eq('user_id', user.id)
+        .eq('verified', true)
+        .maybeSingle();
+
+      if (accountError || !playerAccount) {
+        console.log('No verified player account found');
+        return;
+      }
+
+      // Get character data using the license
+      const { data: characterResponse, error: charError } = await supabase.functions.invoke('get-player-stats-v2', {
+        body: { license: playerAccount.fivem_license }
+      });
+
+      if (charError) {
+        console.error('Error fetching character data:', charError);
+        return;
+      }
+
+      setCharacterData(characterResponse);
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setCharacterLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchServerStatus();
     
+    // Check authentication and fetch character data
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser(session.user);
+        fetchCharacterData();
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (session?.user) {
+          setUser(session.user);
+          fetchCharacterData();
+        } else {
+          setUser(null);
+          setCharacterData(null);
+        }
+      }
+    );
+    
     const interval = setInterval(fetchServerStatus, 30000); // Update every 30 seconds
-    return () => clearInterval(interval);
+    
+    return () => {
+      clearInterval(interval);
+      subscription.unsubscribe();
+    };
   }, []);
+
+  // Re-fetch character data when user changes
+  useEffect(() => {
+    if (user) {
+      fetchCharacterData();
+    }
+  }, [user]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -225,6 +308,110 @@ const ServerStatus = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Character Details - Only show if user is logged in and has character */}
+        {user && characterData && (
+          <Card className="mb-8 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 dark:from-blue-950 dark:to-blue-900 dark:border-blue-800">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <User className="h-5 w-5 text-blue-600" />
+                Mijn Character Details
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Character Info */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-blue-800 dark:text-blue-200">Character Info</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Naam:</span>
+                      <span className="font-medium">{characterData.firstname} {characterData.lastname}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Citizen ID:</span>
+                      <span className="font-mono text-sm">{characterData.citizenid}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Financial Info */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-blue-800 dark:text-blue-200 flex items-center gap-2">
+                    <DollarSign className="h-4 w-4" />
+                    Financiën
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Cash:</span>
+                      <span className="font-medium text-green-600">€{characterData.cash?.toLocaleString() || '0'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Bank:</span>
+                      <span className="font-medium text-blue-600">€{characterData.bank?.toLocaleString() || '0'}</span>
+                    </div>
+                    <div className="flex justify-between border-t pt-2 mt-2">
+                      <span className="text-muted-foreground font-medium">Totaal:</span>
+                      <span className="font-bold text-primary">
+                        €{((characterData.cash || 0) + (characterData.bank || 0)).toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Job Info */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-blue-800 dark:text-blue-200 flex items-center gap-2">
+                    <Briefcase className="h-4 w-4" />
+                    Werk
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Baan:</span>
+                      <span className="font-medium">{characterData.job_name || 'Onbekend'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Rang:</span>
+                      <span className="font-medium">{characterData.job_grade_name || 'Onbekend'}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Show message if user is logged in but no character found */}
+        {user && !characterData && !characterLoading && (
+          <Card className="mb-8 bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200 dark:from-yellow-950 dark:to-yellow-900 dark:border-yellow-800">
+            <CardContent className="text-center py-8">
+              <User className="h-12 w-12 mx-auto mb-4 text-yellow-600" />
+              <h3 className="text-lg font-semibold mb-2">Geen character gekoppeld</h3>
+              <p className="text-muted-foreground mb-4">
+                Koppel je FiveM character om je stats hier te zien
+              </p>
+              <Button asChild>
+                <a href="/character-koppeling">Character Koppelen</a>
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Show login prompt if not logged in */}
+        {!user && (
+          <Card className="mb-8 bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200 dark:from-gray-950 dark:to-gray-900 dark:border-gray-800">
+            <CardContent className="text-center py-8">
+              <User className="h-12 w-12 mx-auto mb-4 text-gray-600" />
+              <h3 className="text-lg font-semibold mb-2">Bekijk je character stats</h3>
+              <p className="text-muted-foreground mb-4">
+                Log in om je character details te bekijken
+              </p>
+              <Button asChild>
+                <a href="/auth">Inloggen</a>
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
         {/* How to Connect */}
         <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
