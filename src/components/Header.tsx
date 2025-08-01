@@ -93,6 +93,15 @@ const Header = () => {
                         Bekijk screenshots en media van onze server
                       </p>
                     </Link>
+                    <Link 
+                      to="/events" 
+                      className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary"
+                    >
+                      <div className="text-sm font-medium leading-none">Events</div>
+                      <p className="line-clamp-2 text-sm leading-snug text-muted-foreground group-hover:text-primary/80">
+                        Bekijk de event kalender en aankomende activiteiten
+                      </p>
+                    </Link>
                   </div>
                 </NavigationMenuContent>
               </NavigationMenuItem>
@@ -210,6 +219,15 @@ const Header = () => {
               Gallery
             </Link>
             <Link 
+              to="/events" 
+              onClick={() => setMobileMenuOpen(false)}
+              className={`block px-3 py-2 rounded-md transition-colors ${
+                location.pathname === '/events' ? 'bg-primary/10 text-primary' : 'text-foreground hover:text-primary hover:bg-primary/5'
+              }`}
+            >
+              Events
+            </Link>
+            <Link
               to="/team" 
               onClick={() => setMobileMenuOpen(false)}
               className={`block px-3 py-2 rounded-md transition-colors ${

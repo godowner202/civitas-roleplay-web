@@ -11,6 +11,7 @@ import Jobs from "./pages/Jobs";
 import ServerStatus from "./pages/ServerStatus";
 import Updates from "./pages/Updates";
 import Gallery from "./pages/Gallery";
+import Events from "./pages/Events";
 import SecretAdmin from "./pages/SecretAdmin";
 import NotFound from "./pages/NotFound";
 
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/status" element={<ServerStatus />} />
           <Route path="/updates" element={<Updates />} />
           <Route path="/gallery" element={<Gallery />} />
+          <Route path="/events" element={<Events />} />
           <Route path="/geheim-admin-123" element={<SecretAdmin />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
