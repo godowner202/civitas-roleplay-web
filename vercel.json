@@ -1,15 +1,5 @@
 {
-  "functions": {
-    "supabase/functions/discord-members/index.ts": {
-      "runtime": "edge",
-      "launcherType": "Nodejs"
-    }
-  },
   "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/supabase/functions/$1"
-    },
     {
       "source": "/(.*)",
       "destination": "/index.html"
