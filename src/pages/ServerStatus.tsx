@@ -295,7 +295,7 @@ const ServerStatus = () => {
                       <span className="font-bold">{characterData.firstname} {characterData.lastname}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground font-medium">Server Naam:</span>
+                      <span className="text-muted-foreground font-medium">Steam Naam:</span>
                       <span className="font-mono text-sm">{characterData.name}</span>
                     </div>
                   </div>

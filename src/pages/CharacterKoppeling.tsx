@@ -373,7 +373,7 @@ const CharacterKoppeling = () => {
                               Citizen ID: {character.citizenid}
                             </p>
                             <p className="text-xs text-muted-foreground">
-                              Server Naam: {character.name}
+                              Steam Naam: {character.name}
                             </p>
                           </div>
                           
