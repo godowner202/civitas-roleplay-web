@@ -1,7 +1,8 @@
-{
+l{
   "functions": {
     "supabase/functions/discord-members/index.ts": {
-      "runtime": "edge"
+      "runtime": "edge",
+      "launcherType": "Nodejs"
     }
   },
   "rewrites": [
