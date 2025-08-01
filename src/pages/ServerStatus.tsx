@@ -54,7 +54,13 @@ const ServerStatus = () => {
       const { data, error } = await supabase.functions.invoke('server-status');
       
       if (error) {
-        throw error;
+        console.error('Server status error:', error);
+        toast({
+          title: "Fout",
+          description: "Kon server status niet ophalen",
+          variant: "destructive"
+        });
+        return;
       }
 
       if (data) {
@@ -66,6 +72,12 @@ const ServerStatus = () => {
             title: "Server Offline",
             description: `Server is momenteel niet bereikbaar: ${data.error}`,
             variant: "destructive"
+          });
+        } else if (data.online) {
+          toast({
+            title: "Server Status Bijgewerkt",
+            description: "Server informatie succesvol vernieuwd",
+            variant: "default"
           });
         }
       }
