@@ -71,8 +71,10 @@ serve(async (req) => {
       }
 
       for (const batch of batches) {
-        const playersToSync = batch.map((row: any) => {
+        const playersToSync = batch.map((row: any, index: number) => {
           try {
+            console.log(`Processing player ${index + 1}, raw row:`, row);
+            
             // Parse based on column positions
             const player = {
               fivem_id: row[0],           // Column 1: id
@@ -86,37 +88,63 @@ serve(async (req) => {
               job: {}                     // Column 9: job (JSON)
             };
 
+            console.log(`Player ${index + 1} basic data:`, {
+              license: player.license,
+              name: player.name,
+              raw_money: row[6],
+              raw_charinfo: row[7],
+              raw_job: row[8]
+            });
+
             // Parse JSON columns
             try {
-              player.money = row[6] ? JSON.parse(row[6]) : {};
+              if (row[6] && typeof row[6] === 'string') {
+                player.money = JSON.parse(row[6]);
+                console.log(`Player ${index + 1} parsed money:`, player.money);
+              }
             } catch (e) {
               console.log(`Error parsing money for license ${player.license}:`, e);
               player.money = {};
             }
 
             try {
-              player.charinfo = row[7] ? JSON.parse(row[7]) : {};
+              if (row[7] && typeof row[7] === 'string') {
+                player.charinfo = JSON.parse(row[7]);
+                console.log(`Player ${index + 1} parsed charinfo:`, player.charinfo);
+              }
             } catch (e) {
               console.log(`Error parsing charinfo for license ${player.license}:`, e);
               player.charinfo = {};
             }
 
             try {
-              player.job = row[8] ? JSON.parse(row[8]) : {};
+              if (row[8] && typeof row[8] === 'string') {
+                player.job = JSON.parse(row[8]);
+                console.log(`Player ${index + 1} parsed job:`, player.job);
+              }
             } catch (e) {
               console.log(`Error parsing job for license ${player.license}:`, e);
               player.job = {};
             }
 
+            console.log(`Player ${index + 1} final data:`, player);
             return player;
           } catch (error) {
             console.log('Error processing player row:', error);
             return null;
           }
-        }).filter(player => player !== null && player.license);
+        }).filter(player => {
+          const isValid = player !== null && player.license;
+          console.log(`Player validation: license=${player?.license}, valid=${isValid}`);
+          return isValid;
+        });
+
+        console.log(`Batch ready for upsert: ${playersToSync.length} players`);
+        console.log('Players to sync:', playersToSync.map(p => ({ license: p.license, name: p.name })));
 
         // Upsert batch to Supabase
         if (playersToSync.length > 0) {
+          console.log('Starting upsert to Supabase...');
           const { data, error } = await supabase
             .from('fivem_players')
             .upsert(playersToSync, { 
@@ -130,8 +158,11 @@ serve(async (req) => {
             errors.push(`Batch error: ${error.message}`);
           } else {
             syncedPlayers.push(...(data || []));
-            console.log(`Synced batch of ${playersToSync.length} players`);
+            console.log(`Successfully synced batch: ${data?.length || 0} players`);
+            console.log('Synced player licenses:', data?.map(d => d.license));
           }
+        } else {
+          console.log('No valid players in batch to sync');
         }
       }
     }

@@ -129,9 +129,9 @@ const CharacterKoppeling = () => {
 
     setVerifying(true);
     try {
-      // Call Edge Function to verify character exists in FiveM database
-      const { data, error } = await supabase.functions.invoke('get-player-stats', {
-        body: { playerId: playerAccount.fivem_license }
+      // Call new v2 Edge Function to verify character exists in Supabase
+      const { data, error } = await supabase.functions.invoke('get-player-stats-v2', {
+        body: { license: playerAccount.fivem_license }
       });
 
       if (error) {
