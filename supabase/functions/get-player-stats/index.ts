@@ -73,9 +73,30 @@ serve(async (req) => {
     // If no specific player ID provided, get all players (limited)
     if (!playerId) {
       console.log('Fetching all players...');
+      
+      // First check what columns exist in the players table
+      const columnsResult = await client.execute(`
+        SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS 
+        WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'players'
+        ORDER BY ORDINAL_POSITION
+      `, [DB_NAME]);
+      
+      const columns = (columnsResult.rows || []).map((row: any) => row[0]);
+      console.log('Available columns in players table:', columns);
+      
+      // Use a safe ORDER BY - try common timestamp columns
+      let orderBy = 'identifier'; // fallback to identifier
+      if (columns.includes('last_login')) orderBy = 'last_login DESC';
+      else if (columns.includes('lastconnection')) orderBy = 'lastconnection DESC';
+      else if (columns.includes('last_seen')) orderBy = 'last_seen DESC';
+      else if (columns.includes('created_at')) orderBy = 'created_at DESC';
+      else if (columns.includes('updated_at')) orderBy = 'updated_at DESC';
+      
+      console.log('Using ORDER BY:', orderBy);
+      
       const playersResult = await client.execute(`
         SELECT * FROM players 
-        ORDER BY last_seen DESC 
+        ORDER BY ${orderBy}
         LIMIT 50
       `);
 
@@ -99,11 +120,39 @@ serve(async (req) => {
 
     // Get specific player by identifier
     console.log('Fetching specific player data...');
-    const playerResult = await client.execute(`
-      SELECT * FROM players 
-      WHERE identifier = ? OR license = ? OR steam = ? OR discord = ?
-      LIMIT 1
-    `, [playerId, playerId, playerId, playerId]);
+    
+    // Get column names first to build a dynamic search query
+    const columnsResult = await client.execute(`
+      SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS 
+      WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'players'
+    `, [DB_NAME]);
+    
+    const columns = (columnsResult.rows || []).map((row: any) => row[0]);
+    console.log('Available columns for search:', columns);
+    
+    // Build search conditions based on available columns
+    const searchConditions: string[] = [];
+    const searchParams: string[] = [];
+    
+    const identifierColumns = ['identifier', 'license', 'steam', 'discord', 'name', 'firstname', 'lastname'];
+    
+    identifierColumns.forEach(col => {
+      if (columns.includes(col)) {
+        searchConditions.push(`${col} = ?`);
+        searchParams.push(playerId);
+      }
+    });
+    
+    if (searchConditions.length === 0) {
+      // Fallback to first column if no identifier columns found
+      searchConditions.push(`${columns[0]} = ?`);
+      searchParams.push(playerId);
+    }
+    
+    const searchQuery = `SELECT * FROM players WHERE ${searchConditions.join(' OR ')} LIMIT 1`;
+    console.log('Search query:', searchQuery);
+    
+    const playerResult = await client.execute(searchQuery, searchParams);
 
     if (playerResult.rows && playerResult.rows.length > 0) {
       const row = playerResult.rows[0];
