@@ -36,7 +36,7 @@ const FiveMDatabaseAnalyzer = () => {
     try {
       console.log('Calling FiveM database analysis...');
       
-      const { data, error } = await supabase.functions.invoke('analyze-fivem-db', {
+      const { data, error } = await supabase.functions.invoke('test-db-connection', {
         body: {}
       });
 
