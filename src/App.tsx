@@ -23,6 +23,8 @@ import AdminTools from "./pages/AdminTools";
 import SyncManager from "./pages/SyncManager";
 import Dashboard from "./pages/Dashboard";
 import Leaderboards from "./pages/Leaderboards";
+import Donations from "./pages/Donations";
+import DonationSuccess from "./pages/DonationSuccess";
 import LoadingSpinner from "./components/LoadingSpinner";
 
 const queryClient = new QueryClient();
@@ -51,7 +53,8 @@ const App = () => (
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/events" element={<Events />} />
             <Route path="/db-analyze" element={<FiveMDatabaseAnalyzer />} />
-            <Route path="/stats" element={<PlayerStats />} />
+            <Route path="/donations" element={<Donations />} />
+            <Route path="/donation-success" element={<DonationSuccess />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/character-koppeling" element={<CharacterKoppeling />} />
             <Route path="/admin-tools" element={<AdminTools />} />

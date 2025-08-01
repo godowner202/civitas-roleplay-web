@@ -104,7 +104,16 @@ const Header = () => {
                       <p className="line-clamp-2 text-sm leading-snug text-muted-foreground group-hover:text-primary/80">
                         Bekijk de event kalender en aankomende activiteiten
                       </p>
-                    </Link>
+                      </Link>
+                      <Link 
+                        to="/donations" 
+                        className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary"
+                      >
+                        <div className="text-sm font-medium leading-none">Donaties</div>
+                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground group-hover:text-primary/80">
+                          Steun de server en help ons groeien
+                        </p>
+                      </Link>
                   </div>
                 </NavigationMenuContent>
               </NavigationMenuItem>
@@ -230,6 +239,15 @@ const Header = () => {
               }`}
             >
               Events
+            </Link>
+            <Link 
+              to="/donations" 
+              onClick={() => setMobileMenuOpen(false)}
+              className={`block px-3 py-2 rounded-md transition-colors ${
+                location.pathname === '/donations' ? 'bg-primary/10 text-primary' : 'text-foreground hover:text-primary hover:bg-primary/5'
+              }`}
+            >
+              Donaties
             </Link>
             <Link
               to="/team" 

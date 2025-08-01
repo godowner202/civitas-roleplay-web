@@ -254,6 +254,42 @@ export type Database = {
         }
         Relationships: []
       }
+      player_vehicles: {
+        Row: {
+          created_at: string
+          garage_location: string | null
+          id: string
+          license: string
+          stored: boolean | null
+          updated_at: string
+          vehicle_data: Json | null
+          vehicle_model: string
+          vehicle_plate: string
+        }
+        Insert: {
+          created_at?: string
+          garage_location?: string | null
+          id?: string
+          license: string
+          stored?: boolean | null
+          updated_at?: string
+          vehicle_data?: Json | null
+          vehicle_model: string
+          vehicle_plate: string
+        }
+        Update: {
+          created_at?: string
+          garage_location?: string | null
+          id?: string
+          license?: string
+          stored?: boolean | null
+          updated_at?: string
+          vehicle_data?: Json | null
+          vehicle_model?: string
+          vehicle_plate?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           cfx_username: string | null

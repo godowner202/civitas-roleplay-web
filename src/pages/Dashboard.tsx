@@ -13,7 +13,8 @@ import {
   Star,
   Users,
   MapPin,
-  Calendar
+  Calendar,
+  Car
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -43,10 +44,20 @@ interface PlayerAccount {
   created_at: string;
 }
 
+interface PlayerVehicle {
+  id: string;
+  vehicle_plate: string;
+  vehicle_model: string;
+  vehicle_data: any;
+  garage_location: string;
+  stored: boolean;
+}
+
 const Dashboard = () => {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [playerAccount, setPlayerAccount] = useState<PlayerAccount | null>(null);
   const [playerData, setPlayerData] = useState<PlayerData | null>(null);
+  const [playerVehicles, setPlayerVehicles] = useState<PlayerVehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   
@@ -102,6 +113,19 @@ const Dashboard = () => {
       if (playerError) throw playerError;
       
       setPlayerData(playerData);
+
+      // Get player vehicles
+      if (account.fivem_license) {
+        // @ts-ignore - Table exists but types not updated yet
+        const { data: vehicles, error: vehiclesError } = await supabase
+          .from('player_vehicles')
+          .select('*')
+          .eq('license', account.fivem_license);
+
+        if (!vehiclesError) {
+          setPlayerVehicles(vehicles || []);
+        }
+      }
     } catch (error) {
       console.error('Error loading player data:', error);
       toast({
@@ -361,11 +385,54 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
+            {/* Player Vehicles */}
+            <Card className="lg:col-span-2">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Car className="h-5 w-5" />
+                  Mijn Voertuigen
+                </CardTitle>
+                <CardDescription>
+                  Overzicht van je voertuigen in de garage
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {playerVehicles.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Car className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <p className="text-muted-foreground">Geen voertuigen gevonden</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {playerVehicles.map((vehicle) => (
+                      <div key={vehicle.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <Car className="h-4 w-4 text-primary" />
+                          <div>
+                            <p className="font-medium">{vehicle.vehicle_model}</p>
+                            <p className="text-sm text-muted-foreground">Kenteken: {vehicle.vehicle_plate}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <Badge variant={vehicle.stored ? "secondary" : "destructive"}>
+                            {vehicle.stored ? "In garage" : "Uitgehaald"}
+                          </Badge>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {vehicle.garage_location}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
           </div>
 
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-4 justify-center">
-            <Button onClick={() => navigate('/stats')} variant="outline">
+            <Button onClick={() => navigate('/status')} variant="outline">
               <Activity className="h-4 w-4 mr-2" />
               Server Status
             </Button>
