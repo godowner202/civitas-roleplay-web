@@ -96,7 +96,7 @@ const ServerStatus = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {/* Server Online Status */}
-          <Card>
+          <Card className="bg-gradient-to-br from-background to-muted/20 border-2 hover:border-primary/20 transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Server Status</CardTitle>
               <Server className="h-4 w-4 text-muted-foreground" />
@@ -105,12 +105,12 @@ const ServerStatus = () => {
               <div className="flex items-center space-x-2">
                 <Badge 
                   className={serverStatus.online 
-                    ? "bg-green-100 text-green-800 border-green-200" 
-                    : "bg-red-100 text-red-800 border-red-200"
+                    ? "bg-green-100 text-green-800 border-green-200 shadow-md" 
+                    : "bg-red-100 text-red-800 border-red-200 shadow-md"
                   }
                 >
                   <div className={`w-2 h-2 rounded-full mr-2 ${
-                    serverStatus.online ? "bg-green-500" : "bg-red-500"
+                    serverStatus.online ? "bg-green-500 animate-pulse" : "bg-red-500"
                   }`} />
                   {serverStatus.online ? "Online" : "Offline"}
                 </Badge>
@@ -127,23 +127,29 @@ const ServerStatus = () => {
           </Card>
 
           {/* Player Count */}
-          <Card>
+          <Card className="bg-gradient-to-br from-background to-muted/20 border-2 hover:border-primary/20 transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Spelers Online</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                 {serverStatus.playerCount}/{serverStatus.maxPlayers}
               </div>
               <p className="text-xs text-muted-foreground">
                 {Math.round((serverStatus.playerCount / serverStatus.maxPlayers) * 100)}% vol
               </p>
+              <div className="w-full bg-muted rounded-full h-2 mt-2">
+                <div 
+                  className="bg-gradient-to-r from-primary to-primary/70 h-2 rounded-full transition-all duration-500"
+                  style={{ width: `${(serverStatus.playerCount / serverStatus.maxPlayers) * 100}%` }}
+                />
+              </div>
             </CardContent>
           </Card>
 
           {/* Server Ping */}
-          <Card>
+          <Card className="bg-gradient-to-br from-background to-muted/20 border-2 hover:border-primary/20 transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Ping</CardTitle>
               <Wifi className="h-4 w-4 text-muted-foreground" />
@@ -161,10 +167,10 @@ const ServerStatus = () => {
 
         {/* Server Information */}
         <div className="grid md:grid-cols-2 gap-6 mb-8">
-          <Card>
+          <Card className="bg-gradient-to-br from-background to-muted/20 border-2 hover:border-primary/20 transition-all duration-300">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Activity className="h-5 w-5" />
+                <Activity className="h-5 w-5 text-primary" />
                 Server Informatie
               </CardTitle>
             </CardHeader>
@@ -174,12 +180,8 @@ const ServerStatus = () => {
                 <span className="font-medium">{serverStatus.serverName}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Server IP:</span>
-                <span className="font-medium font-mono">{serverStatus.hostname}</span>
-              </div>
-              <div className="flex justify-between">
                 <span className="text-muted-foreground">Connect Code:</span>
-                <span className="font-medium font-mono">cfx.re/join/9z4q83</span>
+                <span className="font-medium font-mono">cfx.re/join/o8rdar</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Status:</span>
@@ -190,30 +192,33 @@ const ServerStatus = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-gradient-to-br from-background to-muted/20 border-2 hover:border-primary/20 transition-all duration-300">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Clock className="h-5 w-5" />
+                <Clock className="h-5 w-5 text-primary" />
                 Server Tijden
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Server Tijd:</span>
-                <span className="font-medium">{new Date().toLocaleTimeString("nl-NL")}</span>
-              </div>
-              <div className="flex justify-between">
                 <span className="text-muted-foreground">Restart Schema:</span>
-                <span className="font-medium">Dagelijks om 06:00</span>
+                <span className="font-medium">Dagelijks om 12:00 & 00:00</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Volgende Restart:</span>
                 <span className="font-medium">
                   {(() => {
-                    const tomorrow = new Date();
-                    tomorrow.setDate(tomorrow.getDate() + 1);
-                    tomorrow.setHours(6, 0, 0, 0);
-                    return tomorrow.toLocaleString("nl-NL");
+                    const now = new Date();
+                    const nextRestart = new Date();
+                    
+                    if (now.getHours() < 12) {
+                      nextRestart.setHours(12, 0, 0, 0);
+                    } else {
+                      nextRestart.setDate(nextRestart.getDate() + 1);
+                      nextRestart.setHours(0, 0, 0, 0);
+                    }
+                    
+                    return nextRestart.toLocaleString("nl-NL");
                   })()}
                 </span>
               </div>
@@ -222,26 +227,27 @@ const ServerStatus = () => {
         </div>
 
         {/* How to Connect */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Hoe verbind je met de server?</CardTitle>
+        <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl">Hoe verbind je met de server?</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <h4 className="font-semibold mb-2">Via FiveM Client:</h4>
-                <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground">
-                  <li>Open FiveM</li>
-                  <li>Ga naar "Direct Connect"</li>
-                  <li>Voer in: <code className="bg-muted px-2 py-1 rounded">cfx.re/join/9z4q83</code></li>
-                  <li>Klik op "Connect"</li>
-                </ol>
-              </div>
+          <CardContent className="text-center">
+            <div className="space-y-6">
+              <p className="text-muted-foreground">
+                Klik op de knop hieronder om direct te joinen!
+              </p>
               
-              <div>
-                <h4 className="font-semibold mb-2">Via F8 Console:</h4>
+              <Button 
+                size="lg"
+                className="bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                onClick={() => window.open('https://cfx.re/join/o8rdar', '_blank')}
+              >
+                🎮 KLIK HIER (JOIN LINK)
+              </Button>
+              
+              <div className="bg-muted/50 rounded-lg p-4 max-w-md mx-auto">
                 <p className="text-sm text-muted-foreground">
-                  Druk F8 in FiveM en typ: <code className="bg-muted px-2 py-1 rounded">connect cfx.re/join/9z4q83</code>
+                  Connect Code: <code className="bg-background px-2 py-1 rounded font-mono">cfx.re/join/o8rdar</code>
                 </p>
               </div>
             </div>
