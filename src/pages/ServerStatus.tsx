@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Activity, Users, Clock, Server, Wifi, RefreshCw, User, DollarSign, Briefcase, UserPlus } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
@@ -517,5 +517,6 @@ const ServerStatus = () => {
       <Footer />
     </div>
   );
+};
 
 export default ServerStatus;
