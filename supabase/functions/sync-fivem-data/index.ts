@@ -54,8 +54,12 @@ serve(async (req) => {
 
     console.log('Connected to FiveM database successfully');
 
-    // Get all players from FiveM database
-    const playersResult = await fivemClient.execute(`SELECT * FROM players ORDER BY id`);
+    // Get all players from FiveM database with explicit column names
+    const playersResult = await fivemClient.execute(`
+      SELECT id, userid, citizenid, cid, license, name, money, charinfo, job 
+      FROM players 
+      ORDER BY id
+    `);
     console.log(`Found ${playersResult.rows?.length || 0} players in FiveM database`);
 
     const syncedPlayers = [];
