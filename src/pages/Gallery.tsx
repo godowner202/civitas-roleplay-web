@@ -1,46 +1,40 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, ZoomIn } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Gallery = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  
-  const screenshots = [
-    {
-      src: "/lovable-uploads/2d3ccd34-d1d7-40a0-8177-ea00e717cb95.png",
-      alt: "Belgische Politie Auto - Civitas RP"
-    },
-    {
-      src: "/lovable-uploads/48e4d31d-5f2a-43b0-860d-4328f6fc6530.png", 
-      alt: "Politie Agent bij Politiewagen - Civitas RP"
-    },
-    {
-      src: "/lovable-uploads/781c8a60-73ed-445f-aca5-be7165d435bf.png",
-      alt: "Politie Department Kantoor - Civitas RP"
-    },
-    {
-      src: "/lovable-uploads/4be33ebc-d5bc-4217-8c95-288abdb54bfb.png",
-      alt: "Ziekenhuis & Medisch Centrum - Civitas RP"
-    },
-    {
-      src: "/lovable-uploads/a0ae7c06-f4ac-4809-9409-b41a2cd92a61.png",
-      alt: "Metro Station & Openbaar Vervoer - Civitas RP"
-    },
-    {
-      src: "/lovable-uploads/87d4a968-8fa2-4320-ae50-4869c210ef65.png",
-      alt: "Politie Helikopters boven de Stad - Civitas RP"
-    },
-    {
-      src: "/lovable-uploads/350e4bd9-e87b-4965-9f7f-17f06e286cf2.png",
-      alt: "Stadscentrum & Moderne Gebouwen - Civitas RP"
-    },
-    {
-      src: "/lovable-uploads/2d45f384-7703-4a7d-b348-c5e36bc1b7b4.png",
-      alt: "Los Santos Police Department - Civitas RP"
-    }
-  ];
+  const [galleryItems, setGalleryItems] = useState<Array<{
+    id: string;
+    media_url: string;
+    title: string | null;
+    description: string | null;
+  }>>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchGalleryItems = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('gallery_items')
+          .select('*')
+          .eq('media_type', 'image')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        setGalleryItems(data || []);
+      } catch (error) {
+        console.error('Error fetching gallery items:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGalleryItems();
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -57,27 +51,45 @@ const Gallery = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {screenshots.map((screenshot, index) => (
-            <Card 
-              key={index} 
-              className="group overflow-hidden bg-card border-border hover:border-primary/50 transition-all duration-300 cursor-pointer relative"
-              onClick={() => setSelectedImage(screenshot.src)}
-            >
-              <div className="aspect-video overflow-hidden relative">
-                <img 
-                  src={screenshot.src}
-                  alt={screenshot.alt}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
-                  <ZoomIn className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        {loading ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Laden van galerij...</p>
+          </div>
+        ) : galleryItems.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Nog geen afbeeldingen in de galerij.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {galleryItems.map((item) => (
+              <Card 
+                key={item.id} 
+                className="group overflow-hidden bg-card border-border hover:border-primary/50 transition-all duration-300 cursor-pointer relative"
+                onClick={() => setSelectedImage(item.media_url)}
+              >
+                <div className="aspect-video overflow-hidden relative">
+                  <img 
+                    src={item.media_url}
+                    alt={item.title || item.description || "Gallery image"}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                    <ZoomIn className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </div>
                 </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+                {item.title && (
+                  <div className="p-3">
+                    <h3 className="font-medium text-sm text-foreground">{item.title}</h3>
+                    {item.description && (
+                      <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
+                    )}
+                  </div>
+                )}
+              </Card>
+            ))}
+          </div>
+        )}
         
         <div className="text-center mt-12">
           <p className="text-muted-foreground">
