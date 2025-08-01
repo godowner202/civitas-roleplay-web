@@ -58,12 +58,12 @@ serve(async (req) => {
       console.log('🎯 RAW ROW DATA:', row);
       
       const testPlayer = {
-        fivem_id: row[0],
-        userid: row[1],
-        citizenid: row[2],
-        cid: row[3],
-        license: row[4],
-        name: row[5],
+        fivem_id: row.id,
+        userid: row.userid,
+        citizenid: row.citizenid,
+        cid: row.cid,
+        license: row.license,
+        name: row.name,
         money: {},
         charinfo: {},
         job: {}
@@ -73,9 +73,9 @@ serve(async (req) => {
 
       // Try to parse JSON data
       try {
-        if (row[6]) {
-          console.log('💰 RAW MONEY DATA:', row[6], typeof row[6]);
-          testPlayer.money = typeof row[6] === 'string' ? JSON.parse(row[6]) : row[6];
+        if (row.money) {
+          console.log('💰 RAW MONEY DATA:', row.money, typeof row.money);
+          testPlayer.money = typeof row.money === 'string' ? JSON.parse(row.money) : row.money;
           console.log('💰 PARSED MONEY:', testPlayer.money);
         }
       } catch (e) {
@@ -83,9 +83,9 @@ serve(async (req) => {
       }
 
       try {
-        if (row[7]) {
-          console.log('👤 RAW CHARINFO DATA:', row[7], typeof row[7]);
-          testPlayer.charinfo = typeof row[7] === 'string' ? JSON.parse(row[7]) : row[7];
+        if (row.charinfo) {
+          console.log('👤 RAW CHARINFO DATA:', row.charinfo, typeof row.charinfo);
+          testPlayer.charinfo = typeof row.charinfo === 'string' ? JSON.parse(row.charinfo) : row.charinfo;
           console.log('👤 PARSED CHARINFO:', testPlayer.charinfo);
         }
       } catch (e) {
@@ -93,9 +93,9 @@ serve(async (req) => {
       }
 
       try {
-        if (row[8]) {
-          console.log('💼 RAW JOB DATA:', row[8], typeof row[8]);
-          testPlayer.job = typeof row[8] === 'string' ? JSON.parse(row[8]) : row[8];
+        if (row.job) {
+          console.log('💼 RAW JOB DATA:', row.job, typeof row.job);
+          testPlayer.job = typeof row.job === 'string' ? JSON.parse(row.job) : row.job;
           console.log('💼 PARSED JOB:', testPlayer.job);
         }
       } catch (e) {
