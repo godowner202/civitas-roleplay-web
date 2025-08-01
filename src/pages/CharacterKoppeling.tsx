@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, User, CheckCircle, AlertCircle, Search, UserPlus } from "lucide-react";
+import { Loader2, User, CheckCircle, AlertCircle, Search, UserPlus, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
@@ -185,13 +185,58 @@ const CharacterKoppeling = () => {
       console.error('Error linking character:', error);
       
       let errorMessage = "Er is een fout opgetreden";
-      if (error.message.includes("duplicate key")) {
+      if (error.code === '23505' || error.message.includes("duplicate key") || error.message.includes("player_accounts_fivem_license_key")) {
+        errorMessage = "Dit character is al gekoppeld aan een ander account en kan niet opnieuw worden gekoppeld";
+      } else if (error.message.includes("duplicate")) {
         errorMessage = "Je hebt al een character gekoppeld aan dit account";
       }
 
       toast({
         title: "Koppeling mislukt",
         description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const unlinkCharacter = async () => {
+    if (!user || !playerAccount) return;
+
+    // Ask for confirmation
+    const confirmed = confirm(
+      "Weet je zeker dat je dit character wilt ontkoppelen van je account? " +
+      "Je zult opnieuw moeten zoeken en koppelen om toegang te krijgen tot je stats."
+    );
+
+    if (!confirmed) return;
+
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from('player_accounts')
+        .delete()
+        .eq('id', playerAccount.id)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      setPlayerAccount(null);
+      setSearchResults([]);
+      setFirstName("");
+      setLastName("");
+      
+      toast({
+        title: "Character ontkoppeld",
+        description: "Je character is succesvol ontkoppeld van je account",
+      });
+
+    } catch (error: any) {
+      console.error('Error unlinking character:', error);
+      toast({
+        title: "Ontkoppeling mislukt",
+        description: "Er is een fout opgetreden bij het ontkoppelen van je character",
         variant: "destructive",
       });
     } finally {
@@ -276,6 +321,22 @@ const CharacterKoppeling = () => {
                     }}
                   >
                     Character Wijzigen
+                  </Button>
+
+                  <Button 
+                    variant="destructive"
+                    size="sm"
+                    onClick={unlinkCharacter}
+                    disabled={saving}
+                  >
+                    {saving ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <>
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        Ontkoppelen
+                      </>
+                    )}
                   </Button>
                 </div>
               </CardContent>
