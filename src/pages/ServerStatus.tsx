@@ -242,7 +242,7 @@ const ServerStatus = () => {
                 className="bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 onClick={() => window.open('https://cfx.re/join/o8rdar', '_blank')}
               >
-                🎮 KLIK HIER (JOIN LINK)
+                🎮 JOIN CIVITAS RP NU!
               </Button>
               
               <div className="bg-muted/50 rounded-lg p-4 max-w-md mx-auto">
