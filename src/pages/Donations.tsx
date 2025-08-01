@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Heart, Euro, Users, TrendingUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 interface Donation {
   id: string;
@@ -117,167 +119,171 @@ const Donations = () => {
   const presetAmounts = [5, 10, 25, 50, 100];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/50 p-4">
-      <div className="max-w-6xl mx-auto space-y-8 pt-20">
-        {/* Header */}
-        <div className="text-center space-y-4">
-          <div className="flex justify-center">
-            <Heart className="h-16 w-16 text-red-500" />
+    <>
+      <Header />
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted/50 p-4">
+        <div className="max-w-6xl mx-auto space-y-8 pt-20">
+          {/* Header */}
+          <div className="text-center space-y-4">
+            <div className="flex justify-center">
+              <Heart className="h-16 w-16 text-red-500" />
+            </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              Steun Civitas RP
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Help ons de server draaiende te houden en nieuwe content toe te voegen
+            </p>
+            <p className="text-sm text-muted-foreground max-w-2xl mx-auto bg-muted/30 rounded-lg p-3 mt-4">
+              💯 <strong>Transparantie:</strong> Alle donaties gaan 100% terug naar de server. We houden niets voor onszelf en investeren alles in hosting, ontwikkeling en nieuwe features.
+            </p>
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            Steun Civitas RP
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Help ons de server draaiende te houden en nieuwe content toe te voegen
-          </p>
-          <p className="text-sm text-muted-foreground max-w-2xl mx-auto bg-muted/30 rounded-lg p-3 mt-4">
-            💯 <strong>Transparantie:</strong> Alle donaties gaan 100% terug naar de server. We houden niets voor onszelf en investeren alles in hosting, ontwikkeling en nieuwe features.
-          </p>
-        </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-2">
-                <Euro className="h-8 w-8 text-green-500" />
+          {/* Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-2">
+                  <Euro className="h-8 w-8 text-green-500" />
+                  <div>
+                    <p className="text-2xl font-bold">€{stats.total}</p>
+                    <p className="text-sm text-muted-foreground">Totaal gedoneerd</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-2">
+                  <Users className="h-8 w-8 text-blue-500" />
+                  <div>
+                    <p className="text-2xl font-bold">{stats.count}</p>
+                    <p className="text-sm text-muted-foreground">Donaties</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-2">
+                  <TrendingUp className="h-8 w-8 text-purple-500" />
+                  <div>
+                    <p className="text-2xl font-bold">€{stats.count > 0 ? (stats.total / stats.count).toFixed(0) : 0}</p>
+                    <p className="text-sm text-muted-foreground">Gemiddelde donatie</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Donation Form */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Doneer Nu</CardTitle>
+                <CardDescription>
+                  Steun onze server en help ons groeien
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
                 <div>
-                  <p className="text-2xl font-bold">€{stats.total}</p>
-                  <p className="text-sm text-muted-foreground">Totaal gedoneerd</p>
+                  <Label htmlFor="amount">Bedrag (€)</Label>
+                  <div className="flex flex-wrap gap-2 mt-2 mb-3">
+                    {presetAmounts.map((preset) => (
+                      <Button
+                        key={preset}
+                        variant={amount === preset ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setAmount(preset)}
+                      >
+                        €{preset}
+                      </Button>
+                    ))}
+                  </div>
+                  <Input
+                    id="amount"
+                    type="number"
+                    min="1"
+                    value={amount}
+                    onChange={(e) => setAmount(Number(e.target.value))}
+                    placeholder="Bedrag in euro's"
+                  />
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-2">
-                <Users className="h-8 w-8 text-blue-500" />
+
                 <div>
-                  <p className="text-2xl font-bold">{stats.count}</p>
-                  <p className="text-sm text-muted-foreground">Donaties</p>
+                  <Label htmlFor="donorName">Naam (optioneel)</Label>
+                  <Input
+                    id="donorName"
+                    value={donorName}
+                    onChange={(e) => setDonorName(e.target.value)}
+                    placeholder="Je naam voor op de donatielijst"
+                  />
                 </div>
-              </div>
-            </CardContent>
-          </Card>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-2">
-                <TrendingUp className="h-8 w-8 text-purple-500" />
                 <div>
-                  <p className="text-2xl font-bold">€{stats.count > 0 ? (stats.total / stats.count).toFixed(0) : 0}</p>
-                  <p className="text-sm text-muted-foreground">Gemiddelde donatie</p>
+                  <Label htmlFor="message">Bericht (optioneel)</Label>
+                  <Textarea
+                    id="message"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Laat een bericht achter..."
+                    rows={3}
+                  />
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Donation Form */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Doneer Nu</CardTitle>
-              <CardDescription>
-                Steun onze server en help ons groeien
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <Label htmlFor="amount">Bedrag (€)</Label>
-                <div className="flex flex-wrap gap-2 mt-2 mb-3">
-                  {presetAmounts.map((preset) => (
-                    <Button
-                      key={preset}
-                      variant={amount === preset ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setAmount(preset)}
-                    >
-                      €{preset}
-                    </Button>
-                  ))}
-                </div>
-                <Input
-                  id="amount"
-                  type="number"
-                  min="1"
-                  value={amount}
-                  onChange={(e) => setAmount(Number(e.target.value))}
-                  placeholder="Bedrag in euro's"
-                />
-              </div>
+                <Button 
+                  onClick={handleDonate} 
+                  disabled={loading || amount < 1}
+                  className="w-full"
+                  size="lg"
+                >
+                  {loading ? 'Bezig...' : `Doneer €${amount} via PayPal`}
+                </Button>
+              </CardContent>
+            </Card>
 
-              <div>
-                <Label htmlFor="donorName">Naam (optioneel)</Label>
-                <Input
-                  id="donorName"
-                  value={donorName}
-                  onChange={(e) => setDonorName(e.target.value)}
-                  placeholder="Je naam voor op de donatielijst"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="message">Bericht (optioneel)</Label>
-                <Textarea
-                  id="message"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Laat een bericht achter..."
-                  rows={3}
-                />
-              </div>
-
-              <Button 
-                onClick={handleDonate} 
-                disabled={loading || amount < 1}
-                className="w-full"
-                size="lg"
-              >
-                {loading ? 'Bezig...' : `Doneer €${amount} via PayPal`}
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Recent Donations */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Recente Donaties</CardTitle>
-              <CardDescription>
-                Dank aan onze geweldige donateurs!
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4 max-h-96 overflow-y-auto">
-                {donations.length === 0 ? (
-                  <p className="text-center text-muted-foreground py-8">
-                    Nog geen donaties ontvangen
-                  </p>
-                ) : (
-                  donations.map((donation) => (
-                    <div key={donation.id} className="border rounded-lg p-4 space-y-2">
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">{donation.donor_name}</span>
-                        <Badge variant="secondary">€{donation.amount}</Badge>
-                      </div>
-                      {donation.message && (
-                        <p className="text-sm text-muted-foreground">
-                          "{donation.message}"
+            {/* Recent Donations */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Recente Donaties</CardTitle>
+                <CardDescription>
+                  Dank aan onze geweldige donateurs!
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4 max-h-96 overflow-y-auto">
+                  {donations.length === 0 ? (
+                    <p className="text-center text-muted-foreground py-8">
+                      Nog geen donaties ontvangen
+                    </p>
+                  ) : (
+                    donations.map((donation) => (
+                      <div key={donation.id} className="border rounded-lg p-4 space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium">{donation.donor_name}</span>
+                          <Badge variant="secondary">€{donation.amount}</Badge>
+                        </div>
+                        {donation.message && (
+                          <p className="text-sm text-muted-foreground">
+                            "{donation.message}"
+                          </p>
+                        )}
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(donation.created_at).toLocaleDateString('nl-NL')}
                         </p>
-                      )}
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(donation.created_at).toLocaleDateString('nl-NL')}
-                      </p>
-                    </div>
-                  ))
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 };
 
